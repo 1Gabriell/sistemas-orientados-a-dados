@@ -1,0 +1,43 @@
+{
+  "executado_em_utc": "2026-09-16T15:16:26.132104+00:00",
+  "entradas": {
+    "censo": {
+      "arquivo": "data\\censo_nordeste_2019+.csv",
+      "registros": 240386
+    },
+    "ideb": {
+      "arquivo": "data\\ideb_nordeste_2019+.csv",
+      "registros": 79374
+    }
+  },
+  "anos_selecionados": [
+    2019,
+    2021,
+    2023
+  ],
+  "chave_censo_original": [
+    "id_escola",
+    "ano"
+  ],
+  "chave_integracao": [
+    "id_escola",
+    "ano",
+    "anos_escolares"
+  ],
+  "registros_fora_do_recorte": {
+    "censo": 0,
+    "ideb": 0
+  },
+  "auditoria_cruzamento": {
+    "chaves_ideb_sem_censo": 0,
+    "escolas_ano_censo_sem_ideb": 178061,
+    "registros_censo_apos_expansao_por_etapa": 79374
+  },
+  "saida": {
+    "arquivo": "data\\processed\\base_integrada.csv",
+    "registros": 79374,
+    "colunas": 61,
+    "duplicidades_na_chave": 0,
+    "nulos_na_chave": 0
+  }
+}
