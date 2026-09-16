@@ -1,6 +1,6 @@
 # Sistemas-orientados-a-dados
 
-Repositório para a construção do sistema na disciplina de pós-graduação Sistemas Inteligentes Orientados a Dados. O projeto utiliza dados do Censo Escolar e do IDEB referentes à Região Nordeste.
+Repositório para a construção do sistema na disciplina de pós-graduação Sistemas Inteligentes Orientados a Dados. O projeto utiliza dados do Censo Escolar e do IDEB referentes à Região Nordeste. O sistema tem como objetivo apoiar apoiar a decisão de gestores educacionais, através da triagem e descoberta de situações atípicas.
 
 ## Organização do repositório
 
