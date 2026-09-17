@@ -1,4 +1,4 @@
-"""Pipeline de preparação e integração dos dados do Censo Escolar e do IDEB."""
+"""Pipeline 01 de preparação e integração dos dados do Censo Escolar e do IDEB."""
 
 from __future__ import annotations
 

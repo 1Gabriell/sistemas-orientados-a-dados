@@ -8,6 +8,8 @@
 
 A origem e o processo de obtenção seguem os mesmos utilizados anteriormente no projeto.
 
+A única mudança além das escolha dos anos, foi a remoção da coluna tipo_situacao_funcinamento da tabela censo por ela ser completamente nula.
+
 #### Distribuição temporal
 
 | Ano | Total de registros |
@@ -92,7 +94,7 @@ Como as bases atuais já estão restritas aos anos de **2019, 2021 e 2023**, par
 | Linhas completamente duplicadas | Todas as colunas possuem os mesmos valores | **0** |
 | Duplicidades por escola e ano | Combinação `ano + id_escola` repetida | **0** |
 
-Não foram identificadas duplicidades na base atualizada do Censo Escolar. Cada combinação de **ano e escola** aparece uma única vez, permitindo utilizar `ano + id_escola` como chave de relacionamento com a base do IDEB.
+Não foram identificadas duplicidades na base atualizada do Censo Escolar. Cada combinação de **ano e escola** aparece uma única vez. Como o Censo não contém `anos_escolares`, o pipeline associa a cada escola-ano as etapas únicas observadas no IDEB antes de efetuar o cruzamento final pela chave tripla.
 
 #### IDEB
 
@@ -122,7 +124,7 @@ Também foi verificada a presença de valores ausentes nas variáveis utilizadas
 
 Dessa forma, as principais chaves necessárias para o cruzamento estão completamente preenchidas.
 
-Isso é especialmente importante porque o relacionamento entre as fontes é realizado por **`ano + id_escola`**, enquanto `anos_escolares` permite diferenciar as diferentes observações de uma mesma escola dentro do IDEB.
+Isso é especialmente importante porque a base final usa **`id_escola + ano + anos_escolares`** como chave. O Censo é inicialmente relacionado às etapas do IDEB por escola e ano apenas para compatibilizar a granularidade; em seguida, o cruzamento final entre as duas visões é executado e validado pelas três colunas.
 
 ---
 
@@ -134,15 +136,13 @@ Os maiores percentuais encontrados no **Censo Escolar** são:
 
 | Campo | % ausente |
 | --- | ---: |
-| `tipo_situacao_funcionamento` | **100,00%** |
 | `quantidade_matricula_utiliza_transporte_publico` | **75,10%** |
 | `laboratorio_educacao_profissional` | **74,88%** |
 | `profissional_assistente_social` | **49,44%** |
 | Variáveis relacionadas às matrículas e turnos | **23,92%** |
 | Grande parte das variáveis de infraestrutura, tecnologia e profissionais | **23,29%** |
 
-A variável `tipo_situacao_funcionamento` continua completamente vazia na extração atual, portanto **não poderá ser utilizada diretamente nas análises**.
-No caso das três variáveis seguintes, parte do elevado percentual pode ser explicada pelo período em que passaram a ser disponibilizadas. No levantamento anterior, o assistente social aparecia a partir de 2020, laboratório de educação profissional a partir de 2022 e transporte público dos alunos a partir de 2023.
+No caso das três primeiras variáveis, parte do elevado percentual pode ser explicada pelo período em que passaram a ser disponibilizadas. No levantamento anterior, o assistente social aparecia a partir de 2020, laboratório de educação profissional a partir de 2022 e transporte público dos alunos a partir de 2023.
 
 ### Disponibilidade nos anos selecionados
 
@@ -151,7 +151,6 @@ No caso das três variáveis seguintes, parte do elevado percentual pode ser exp
 | `profissional_assistente_social` | Ausente | Disponível | Disponível |
 | `laboratorio_educacao_profissional` | Ausente | Ausente | Disponível |
 | `quantidade_matricula_utiliza_transporte_publico` | Ausente | Ausente | Disponível |
-| `tipo_situacao_funcionamento` | Ausente | Ausente | Ausente |
 
 Isso explica uma parte importante dos percentuais globais de ausência.
 

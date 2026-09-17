@@ -27,4 +27,4 @@ Tabelas CSV e consultas SQL do Censo Escolar e do IDEB para o **Nordeste**, obti
 | [ideb_nordeste_2019+.sql](ideb_nordeste_2019+.sql) | IDEB do Nordeste em 2019, 2021 e 2023, com `ideb` preenchido. |
 
 
-As bases se relacionam por `ano + id_escola`; no IDEB, `anos_escolares` diferencia as etapas de ensino. Veja a [caracterização e avaliação de qualidade](../docs/caracterizacao_2019+.md) para mais detalhes.
+A chave da base integrada é **`id_escola + ano + anos_escolares`**. Como o arquivo do Censo tem granularidade de escola e ano e não possui `anos_escolares`, o pipeline associa primeiro a cada registro do Censo as etapas únicas observadas no IDEB. O cruzamento final é então validado como 1:1 pelas três colunas. Veja o [README principal](../README.md) e a [caracterização e avaliação de qualidade](../docs/caracterizacao_2019+.md) para mais detalhes.
