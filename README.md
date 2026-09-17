@@ -14,6 +14,20 @@ O recorte atual considera os anos de **2019, 2021 e 2023**. A caracterização d
 | [pipelines](pipelines/) | Rotinas de processamento, testes automatizados e suas instruções de execução. |
 | [requirements.txt](requirements.txt) | Dependências Python necessárias para executar o código do projeto. |
 
+## Requisitos
+
+| Requisito | Versão ou condição | Finalidade |
+| --- | --- | --- |
+| Python | 3.10 ou superior | Executar o processamento e os testes automatizados. |
+| `pip` | Compatível com a versão instalada do Python | Instalar as dependências declaradas em `requirements.txt`. |
+| Pandas | 2.0 ou superior e inferior a 4.0 | Ler, validar, transformar e integrar os dados tabulares. |
+| Ambiente virtual | Recomendado | Isolar as dependências do projeto das demais instalações do sistema. |
+| Jupyter Notebook ou editor compatível | Opcional | Abrir e executar os arquivos da pasta `notebooks/`. |
+
+Os arquivos CSV necessários para o processamento já estão organizados na pasta `data/`. O acesso ao Google BigQuery não é necessário para trabalhar com os dados existentes; ele é necessário apenas caso se deseje executar novamente as consultas SQL de extração.
+
+As dependências obrigatórias são instaladas a partir de `requirements.txt`. As instruções de preparação do ambiente, execução do código e testes estão em [pipelines/README.md](pipelines/README.md).
+
 ## Arquitetura do projeto
 
 O repositório adota uma arquitetura em camadas para separar dados, processamento, análise e documentação. Essa organização permite atualizar cada parte do projeto sem misturar arquivos de origem, resultados gerados e código executável.

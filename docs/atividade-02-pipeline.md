@@ -263,13 +263,16 @@ As evidências completas e recalculáveis de cada execução ficam armazenadas e
 
 ## 7 Registro das principais decisões técnicas
 
-1. A chave final foi definida como `id_escola + ano + anos_escolares`, pois escola e ano não identificam de forma única as observações do IDEB.
-2. A granularidade do Censo foi ajustada somente para as etapas observadas no IDEB, sem criar etapas artificiais.
-3. Os atributos escolares são repetidos por etapa, mas os indicadores educacionais não são agregados nem recalculados.
-4. Identificadores são tratados como texto para preservar sua função de chave e evitar interpretação como medidas contínuas.
-5. Anos, etapas e indicadores são padronizados antes do cruzamento para reduzir diferenças apenas de formato.
-6. Valores ausentes nos indicadores são preservados; o pipeline não realiza imputação automática.
-7. Domínios numéricos são validados para impedir a propagação de indicadores impossíveis.
-8. Os relacionamentos são validados como muitos-para-um na expansão e 1:1 na integração final.
-9. Registros do Censo sem IDEB ficam fora da saída, que representa escolas com resultado educacional observado.
-10. A gravação temporária e o relatório de auditoria tornam a execução mais segura e verificável.
+Ao fazer a exeucução do pipeline, ficou mais claro ao tentar tornar o processo automático, alguns gargalos que antes não tão bem enxergados, como por exemplo, a necessidade de uma chave final definitiva como `id_escola + ano + anos_escolares`, pois escola e ano não identificam de forma única as observações do IDEB, já que na tabela IDEB são divididos por etapas do ensino. Além disso,
+os anos, etapas e indicadores são padronizados antes do cruzamento para reduzir as diferenças no formato e não gerar conflito no momento do cruzamento das duas tabelas.
+
+Quando temos valores ausentes nos indicadores eles ainda são preservados, a inputação automática se necessária, será definida em um futuro pipeline de acordo com os modelos de IA que serão utilizados.
+Os atributos escolares são repetidos por etapa, mas os indicadores educacionais não são agregados nem recalculados, não é feito uma média entre ele por exemplo.
+Outro ponto é que os identificadores estão sendo tratados como texto para preservar sua função de chave e evitar interpretação como medidas contínuas.
+
+Não foram mantidas na tabela final, escolas do censo que não possuem correspodência na tabela IDEB, pois a ideia inicial é aplicar modelos não supervisionados para identificar padrões e semelhanças entre as escolas. 
+
+ 
+ 
+
+ 
