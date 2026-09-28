@@ -8,6 +8,7 @@ from pipelines.pipeline_01 import (
     integrar,
     padronizar_e_validar_numericos_ideb,
     preparar_granularidade_censo,
+    tratar_codigos_especiais_censo,
     validar_chave,
 )
 
@@ -56,6 +57,22 @@ class PipelineTestCase(unittest.TestCase):
         invalido = self.ideb.assign(ideb=[11.0, 4.8])
         with self.assertRaises(ErroValidacao):
             padronizar_e_validar_numericos_ideb(invalido)
+
+    def test_codigos_especiais_do_censo_viram_ausentes(self) -> None:
+        censo = self.censo.assign(
+            quantidade_profissional_psicologo=[88888],
+            quantidade_profissional_saude=[2],
+            orgao_gremio_estudantil=[9],
+            material_pedagogico_musical=[1],
+        )
+        resultado, substituicoes = tratar_codigos_especiais_censo(censo)
+
+        self.assertTrue(pd.isna(resultado.loc[0, "quantidade_profissional_psicologo"]))
+        self.assertTrue(pd.isna(resultado.loc[0, "orgao_gremio_estudantil"]))
+        self.assertEqual(resultado.loc[0, "quantidade_profissional_saude"], 2)
+        self.assertEqual(resultado.loc[0, "material_pedagogico_musical"], 1)
+        self.assertEqual(substituicoes["88888"]["quantidade_profissional_psicologo"], 1)
+        self.assertEqual(substituicoes["9"]["orgao_gremio_estudantil"], 1)
 
 
 if __name__ == "__main__":

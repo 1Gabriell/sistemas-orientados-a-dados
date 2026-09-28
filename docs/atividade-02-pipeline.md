@@ -56,7 +56,7 @@ Com o ambiente preparado, o pipeline pode ser executado por meio do comando:
 python pipelines/pipeline_01.py
 ```
 
-Nessa forma de execução, o programa utiliza os arquivos de entrada e saída apresentados na Seção 1.2.
+Nessa forma de execução, o programa utiliza os arquivos de entrada e saída apresentados na Seção 3.
 
 ### 2.3 Execução com caminhos personalizados
 
@@ -93,15 +93,16 @@ O processamento é composto pelas seguintes etapas:
 2. Verificação das colunas obrigatórias de cada fonte.
 3. Padronização dos identificadores, do ano e da etapa de ensino.
 4. Conversão e validação dos indicadores numéricos do IDEB.
-5. Seleção dos anos de 2019, 2021 e 2023.
-6. Verificação de valores ausentes nas chaves.
-7. Verificação de duplicidades nas chaves do Censo e do IDEB.
-8. Identificação das etapas de ensino existentes para cada escola e ano.
-9. Expansão controlada dos registros do Censo para a granularidade escola-ano-etapa.
-10. Integração 1:1 entre o Censo expandido e o IDEB.
-11. Verificação da consistência de estado e município entre as fontes.
-12. Validação da chave da base integrada.
-13. Gravação do CSV processado e do relatório de auditoria.
+5. Substituição dos códigos especiais do Censo por valores ausentes.
+6. Seleção dos anos de 2019, 2021 e 2023.
+7. Verificação de valores ausentes nas chaves.
+8. Verificação de duplicidades nas chaves do Censo e do IDEB.
+9. Identificação das etapas de ensino existentes para cada escola e ano.
+10. Expansão controlada dos registros do Censo para a granularidade escola-ano-etapa.
+11. Integração 1:1 entre o Censo expandido e o IDEB.
+12. Verificação da consistência de estado e município entre as fontes.
+13. Validação da chave da base integrada.
+14. Gravação do CSV processado e do relatório de auditoria.
 
 As validações são utilizadas para impedir que problemas de estrutura, tipo, domínio ou relacionamento sejam propagados para a base final.
 
@@ -152,13 +153,26 @@ A função `padronizar_e_validar_numericos_ideb` converte os indicadores do IDEB
 
 Um texto que não possa ser convertido em número ou um valor fora do intervalo aceito interrompe o pipeline. Valores originalmente ausentes permanecem ausentes: não é realizada imputação pela média, substituição por zero ou qualquer outro preenchimento automático.
 
-### 5.6 Aplicação do recorte temporal
+### 5.6 Tratamento dos códigos especiais do Censo
+
+Algumas colunas do Censo utilizam códigos que não representam valores reais. A função `tratar_codigos_especiais_censo` substitui esses códigos por valores ausentes:
+
+| Código | Colunas | Motivo |
+| ---: | --- | --- |
+| 88888 | `quantidade_profissional_saude`, `quantidade_profissional_nutricionista`, `quantidade_profissional_psicologo` e `quantidade_profissional_pedagogia` | Código especial do Inep, e não uma quantidade de profissionais. |
+| 9 | `material_pedagogico_multimidia`, `material_pedagogico_infantil`, `material_pedagogico_cientifico`, `material_pedagogico_musical`, `material_pedagogico_artistica` e `orgao_gremio_estudantil` | Valor fora do domínio 0/1, presente apenas em 2019 e equivalente a informação não disponível. |
+
+Manter esses códigos distorceria médias, correlações e distâncias usadas pelos modelos: uma única escola com 88888 psicólogos domina qualquer média, e o valor 9 seria lido como presença do recurso. Substituí-los por zero também seria incorreto, pois afirmaria que a escola não possui o profissional ou o recurso. Por isso, eles passam a ser ausentes, e a decisão sobre imputação fica para as etapas de modelagem.
+
+A quantidade de substituições por coluna é registrada no relatório de execução.
+
+### 5.7 Aplicação do recorte temporal
 
 A função `filtrar_anos` mantém somente os registros de 2019, 2021 e 2023. A quantidade de registros fora desse recorte é armazenada para inclusão no relatório de execução.
 
 Se nenhum registro permanecer depois do filtro, o pipeline é interrompido. Nos arquivos atuais, as duas entradas já estavam limitadas aos três anos selecionados e, por isso, nenhum registro foi removido nessa etapa.
 
-### 5.7 Validação das chaves originais
+### 5.8 Validação das chaves originais
 
 A função `validar_chave` verifica duas condições:
 
@@ -167,7 +181,7 @@ A função `validar_chave` verifica duas condições:
 
 No Censo, a verificação é realizada por `id_escola + ano`. No IDEB, é realizada por `id_escola + ano + anos_escolares`.
 
-### 5.8 Compatibilização da granularidade
+### 5.9 Compatibilização da granularidade
 
 A função `preparar_granularidade_censo` realiza a principal transformação estrutural do pipeline. Primeiro são extraídas do IDEB as combinações únicas de escola, ano e etapa. Em seguida, essas combinações são relacionadas ao Censo por escola e ano.
 
@@ -195,7 +209,7 @@ O atributo `biblioteca` é repetido porque descreve a escola naquele ano. Os res
 
 O relacionamento utilizado para levar o Censo à nova granularidade é validado como muitos-para-um: várias etapas do IDEB podem apontar para um único registro de escola e ano no Censo.
 
-### 5.9 Auditoria das correspondências
+### 5.10 Auditoria das correspondências
 
 Durante a compatibilização são calculadas três medidas:
 
@@ -205,7 +219,7 @@ Durante a compatibilização são calculadas três medidas:
 
 Essas medidas permitem distinguir uma expansão decorrente das diferentes etapas de uma exclusão provocada pela ausência de correspondência entre as fontes.
 
-### 5.10 Integração final
+### 5.11 Integração final
 
 A função `integrar` cruza o Censo expandido com o IDEB por meio da chave tripla:
 
@@ -223,17 +237,17 @@ Quando uma coluna existe nas duas fontes, são utilizados os sufixos `_censo` e 
 
 Depois do cruzamento, estado e município são comparados. Uma divergência geográfica interrompe o pipeline, pois indicaria que o mesmo identificador de escola foi relacionado a localidades diferentes.
 
-### 5.11 Validação e organização da saída
+### 5.12 Validação e organização da saída
 
 A chave tripla é validada novamente após a integração. Em seguida, suas três colunas são posicionadas no início da tabela, facilitando a identificação de cada observação.
 
-O resultado mantém os atributos das duas fontes. Não são realizadas agregações, normalizações estatísticas, codificações de categorias ou imputações de valores ausentes.
+O resultado mantém os atributos das duas fontes. Além da substituição dos códigos especiais descrita na Seção 5.6, não são realizadas agregações, normalizações estatísticas, codificações de categorias ou imputações de valores ausentes.
 
-### 5.12 Gravação dos resultados
+### 5.13 Gravação dos resultados
 
 O CSV e o relatório são inicialmente gravados em arquivos temporários. Somente depois que a escrita é concluída esses arquivos substituem os destinos definitivos.
 
-Esse procedimento reduz o risco de deixar uma saída incompleta caso a execução seja interrompida durante a gravação. O relatório JSON registra o horário da execução, os caminhos utilizados, as contagens das entradas, os anos selecionados, as chaves, a auditoria do cruzamento e as verificações da saída.
+Esse procedimento reduz o risco de deixar uma saída incompleta caso a execução seja interrompida durante a gravação. O relatório JSON registra o horário da execução, os caminhos utilizados, as contagens das entradas, os anos selecionados, as chaves, os códigos especiais substituídos, a auditoria do cruzamento e as verificações da saída.
 
 ## 6 Evidências da execução
 
@@ -245,6 +259,8 @@ O pipeline foi executado com os arquivos atuais do Censo Escolar e do IDEB. O re
 | Registros recebidos do IDEB | 79.374 |
 | Registros do Censo fora do recorte temporal | 0 |
 | Registros do IDEB fora do recorte temporal | 0 |
+| Códigos 88888 substituídos por ausente | 782 |
+| Códigos 9 substituídos por ausente | 49.798 |
 | Chaves do IDEB sem correspondência no Censo | 0 |
 | Escolas-ano do Censo sem correspondência no IDEB | 178.061 |
 | Registros do Censo após expansão por etapa | 79.374 |

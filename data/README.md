@@ -22,8 +22,8 @@ Tabelas CSV e consultas SQL do Censo Escolar e do IDEB para o **Nordeste**, obti
 | Arquivo | Filtros |
 | --- | --- |
 | [censo_educacional_nordeste_query.sql](censo_educacional_nordeste_query.sql) | Censo do Nordeste, sem restrição de ano. |
-| [censo_nodeste_2019+_query.sql](censo_nodeste_2019+_query.sql) | Censo do Nordeste em 2019, 2021 e 2023. |
-| [ideb_nordeste_sem_nulos_query.sql](ideb_nordeste_sem_nulos_query.sql) | IDEB do Nordeste em 2019, 2021 e 2023, com `ideb` preenchido. |
+| [censo_nordeste_2019+_query.sql](censo_nordeste_2019+_query.sql) | Censo do Nordeste em 2019, 2021 e 2023. |
+| [ideb_nordeste_sem_nulos_query.sql](ideb_nordeste_sem_nulos_query.sql) | IDEB do Nordeste, sem restrição de ano, com `ideb` preenchido. |
 | [ideb_nordeste_2019+.sql](ideb_nordeste_2019+.sql) | IDEB do Nordeste em 2019, 2021 e 2023, com `ideb` preenchido. |
 
 

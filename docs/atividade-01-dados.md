@@ -237,7 +237,7 @@ Algumas colunas de quantidade apresentam o valor **88888**, que não é uma quan
 | `quantidade_profissional_psicologo` | 67 |
 | `quantidade_profissional_pedagogia` | **1.048** |
 
-O código aparece em todos os anos de 2019 a 2024. No notebook, ele é substituído por valor ausente antes das análises, pois mantê-lo distorceria médias e correlações.
+O código aparece em todos os anos de 2019 a 2024. No notebook e no pipeline, ele é substituído por valor ausente antes das análises, pois mantê-lo distorceria médias e correlações.
 
 #### Código 9 em variáveis binárias
 
@@ -252,7 +252,7 @@ Variáveis que deveriam assumir apenas 0 ou 1 também apresentam o valor **9**, 
 | `material_pedagogico_musical` | 9.526 |
 | `material_pedagogico_artistica` | 9.526 |
 
-Esse valor deve ser tratado como "não informado", e não como presença do recurso. Caso contrário, qualquer média calculada sobre essas colunas em 2019 fica inflada.
+Esse valor deve ser tratado como "não informado", e não como presença do recurso; o pipeline o substitui por valor ausente. Caso contrário, qualquer média calculada sobre essas colunas em 2019 fica inflada.
 
 #### Valores extremos do IDEB
 

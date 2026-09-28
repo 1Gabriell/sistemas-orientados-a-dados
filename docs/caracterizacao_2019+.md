@@ -200,10 +200,34 @@ Dessa forma, a ausência encontrada em `projecao` não inviabiliza a utilizaçã
 
 ## 3.4 Valores especiais
 
-Na análise anterior foram encontradas ocorrências do valor **8888** em variáveis relacionadas à quantidade de profissionais.
+Os códigos especiais identificados na base histórica **continuam presentes** no recorte de 2019, 2021 e 2023.
 
-Nas bases atualizadas de **2019, 2021 e 2023, não foram encontradas ocorrências do valor 8888**.
+### Código 88888 nas quantidades de profissionais
 
-Isso elimina um dos problemas identificados anteriormente e evita a necessidade, nesse recorte, de tratar esse código antes das análises.
+O valor **88888** não é uma quantidade real, e sim um código especial do Inep.
 
-Também não foram encontrados valores negativos nas variáveis numéricas do Censo Escolar.
+| Variável | 2019 | 2021 | 2023 | Total |
+| --- | ---: | ---: | ---: | ---: |
+| `quantidade_profissional_saude` | 109 | 46 | 75 | **230** |
+| `quantidade_profissional_nutricionista` | 6 | 9 | 2 | **17** |
+| `quantidade_profissional_psicologo` | 13 | 10 | 20 | **43** |
+| `quantidade_profissional_pedagogia` | 164 | 157 | 171 | **492** |
+
+### Código 9 em variáveis binárias
+
+As variáveis abaixo deveriam assumir apenas 0 ou 1, mas também apresentam o valor **9**. Todas as ocorrências estão em **2019**.
+
+| Variável | Ocorrências |
+| --- | ---: |
+| `material_pedagogico_multimidia` | 9.526 |
+| `material_pedagogico_infantil` | 9.526 |
+| `material_pedagogico_cientifico` | 9.526 |
+| `material_pedagogico_musical` | 9.526 |
+| `material_pedagogico_artistica` | 9.526 |
+| `orgao_gremio_estudantil` | 2.168 |
+
+### Tratamento adotado
+
+Os dois códigos são **substituídos por valores ausentes** no pipeline, antes do cruzamento com o IDEB. Mantê-los distorceria médias e correlações (88888 profissionais em uma escola, ou o valor 9 lido como presença do recurso), e substituí-los por zero afirmaria que a escola não possui o profissional ou o recurso, o que a base não informa. A quantidade de substituições por coluna fica registrada em `data/processed/relatorio_execucao.json`.
+
+Não foram encontrados valores negativos nas variáveis numéricas do Censo Escolar.

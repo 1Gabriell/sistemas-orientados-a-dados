@@ -1,12 +1,12 @@
 {
-  "executado_em_utc": "2026-09-16T15:16:26.132104+00:00",
+  "executado_em_utc": "2026-09-28T13:55:25.438674+00:00",
   "entradas": {
     "censo": {
-      "arquivo": "data\\censo_nordeste_2019+.csv",
+      "arquivo": "data/censo_nordeste_2019+.csv",
       "registros": 240386
     },
     "ideb": {
-      "arquivo": "data\\ideb_nordeste_2019+.csv",
+      "arquivo": "data/ideb_nordeste_2019+.csv",
       "registros": 79374
     }
   },
@@ -28,13 +28,29 @@
     "censo": 0,
     "ideb": 0
   },
+  "codigos_especiais_censo_substituidos_por_ausente": {
+    "88888": {
+      "quantidade_profissional_saude": 230,
+      "quantidade_profissional_nutricionista": 17,
+      "quantidade_profissional_psicologo": 43,
+      "quantidade_profissional_pedagogia": 492
+    },
+    "9": {
+      "material_pedagogico_multimidia": 9526,
+      "material_pedagogico_infantil": 9526,
+      "material_pedagogico_cientifico": 9526,
+      "material_pedagogico_musical": 9526,
+      "material_pedagogico_artistica": 9526,
+      "orgao_gremio_estudantil": 2168
+    }
+  },
   "auditoria_cruzamento": {
     "chaves_ideb_sem_censo": 0,
     "escolas_ano_censo_sem_ideb": 178061,
     "registros_censo_apos_expansao_por_etapa": 79374
   },
   "saida": {
-    "arquivo": "data\\processed\\base_integrada.csv",
+    "arquivo": "data/processed/base_integrada.csv",
     "registros": 79374,
     "colunas": 61,
     "duplicidades_na_chave": 0,

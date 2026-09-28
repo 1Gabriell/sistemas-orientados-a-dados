@@ -36,6 +36,24 @@ DOMINIOS_NUMERICOS_IDEB = {
     "projecao": (0.0, 10.0),
 }
 
+# Códigos do Inep que não representam valores reais e são tratados como ausentes.
+CODIGOS_ESPECIAIS_CENSO = {
+    88888: [
+        "quantidade_profissional_saude",
+        "quantidade_profissional_nutricionista",
+        "quantidade_profissional_psicologo",
+        "quantidade_profissional_pedagogia",
+    ],
+    9: [
+        "material_pedagogico_multimidia",
+        "material_pedagogico_infantil",
+        "material_pedagogico_cientifico",
+        "material_pedagogico_musical",
+        "material_pedagogico_artistica",
+        "orgao_gremio_estudantil",
+    ],
+}
+
 LOGGER = logging.getLogger("pipeline")
 
 
@@ -90,6 +108,26 @@ def padronizar_chaves(df: pd.DataFrame, nome: str) -> pd.DataFrame:
         resultado["anos_escolares"] = resultado["anos_escolares"].replace("", pd.NA)
 
     return resultado
+
+
+def tratar_codigos_especiais_censo(
+    df: pd.DataFrame,
+) -> tuple[pd.DataFrame, dict[str, dict[str, int]]]:
+    """Substitui por ausente os códigos especiais do Censo, sem imputar valores."""
+
+    resultado = df.copy()
+    substituicoes: dict[str, dict[str, int]] = {}
+    for codigo, colunas in CODIGOS_ESPECIAIS_CENSO.items():
+        contagens = {}
+        for coluna in colunas:
+            if coluna not in resultado:
+                continue
+            convertida = pd.to_numeric(resultado[coluna], errors="coerce")
+            ocorrencias = convertida == codigo
+            contagens[coluna] = int(ocorrencias.sum())
+            resultado[coluna] = convertida.mask(ocorrencias)
+        substituicoes[str(codigo)] = contagens
+    return resultado, substituicoes
 
 
 def filtrar_anos(df: pd.DataFrame, nome: str) -> tuple[pd.DataFrame, int]:
@@ -245,6 +283,14 @@ def executar(caminho_censo: Path, caminho_ideb: Path, saida: Path, relatorio: Pa
     ideb = padronizar_e_validar_numericos_ideb(ideb)
     LOGGER.info("Tipos e domínios numéricos padronizados")
 
+    censo, codigos_especiais = tratar_codigos_especiais_censo(censo)
+    for codigo, contagens in codigos_especiais.items():
+        LOGGER.info(
+            "Código especial %s substituído por ausente: %s ocorrências",
+            codigo,
+            f"{sum(contagens.values()):,}",
+        )
+
     censo, censo_fora_recorte = filtrar_anos(censo, "Censo")
     ideb, ideb_fora_recorte = filtrar_anos(ideb, "IDEB")
     LOGGER.info("Recorte temporal aplicado: %s", ", ".join(map(str, ANOS_VALIDOS)))
@@ -276,6 +322,7 @@ def executar(caminho_censo: Path, caminho_ideb: Path, saida: Path, relatorio: Pa
             "censo": censo_fora_recorte,
             "ideb": ideb_fora_recorte,
         },
+        "codigos_especiais_censo_substituidos_por_ausente": codigos_especiais,
         "auditoria_cruzamento": auditoria,
         "saida": {
             "arquivo": str(saida),
