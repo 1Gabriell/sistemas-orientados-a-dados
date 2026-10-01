@@ -1,8 +1,50 @@
-# Sistemas orientados a dados — Censo Escolar e IDEB
+# Sistema de Apoio à Gestão Educacional — Censo Escolar e IDEB
 
-Repositório da disciplina de pós-graduação Sistemas Inteligentes Orientados a Dados. O projeto combina dados do Censo Escolar e do IDEB da Região Nordeste para apoiar a decisão de gestores educacionais por meio da triagem e descoberta de situações atípicas.
+Repositório do projeto da disciplina de pós-graduação **Sistemas Inteligentes Orientados a Dados** (PGCOMP · UFBA · 2026.2). O projeto desenvolve um sistema de apoio à decisão para gestores educacionais da Região Nordeste. O sistema identifica **anomalias**, descobre **padrões** e define **prioridades de atenção** entre as escolas, a partir da integração do Censo Escolar com o IDEB.
 
-O recorte atual considera os anos de **2019, 2021 e 2023**. A caracterização das fontes e a justificativa desse recorte estão documentadas em [Caracterização dos dados — 2019, 2021 e 2023](docs/caracterizacao_2019+.md).
+## O projeto
+
+| Pergunta | Resposta |
+| --- | --- |
+| Qual problema existe? | Entre milhares de escolas, o gestor não consegue ver quais fogem do padrão do seu perfil nem por quê. Ordenar as escolas pelo menor IDEB ignora o contexto de cada uma. |
+| Quem sente o problema? | Gestores educacionais das redes municipais e estaduais. O sistema apoia a decisão, mas não decide por eles. |
+| Quais dados ajudam? | Censo Escolar (240.386 escolas-ano × 50 atributos) e IDEB (79.374 registros × 14 atributos) de 2019, 2021 e 2023, integrados em uma base de 79.374 linhas × 61 colunas. |
+| Que decisão é apoiada? | Onde concentrar a atenção: escolas anômalas em relação aos seus pares, priorizadas com motivos explícitos e situadas nos padrões descobertos. |
+
+## Funcionalidades previstas
+
+As três funcionalidades trabalham em conjunto: **perfil da escola → padrão do grupo → anomalia → prioridade explicada**.
+
+| Funcionalidade | Descrição | Abordagem prevista |
+| --- | --- | --- |
+| Detecção de anomalias | Sinaliza escolas que fogem do esperado para o seu grupo de pares, como desempenho destoante, quedas bruscas entre edições do IDEB ou combinações incomuns de características. | Isolation Forest, LOF ou métodos baseados em distância |
+| Descoberta de padrões | Agrupa as escolas por perfil a partir dos próprios dados, sem grupos definidos de antemão, e revela características associadas aos resultados. | Agrupamento (*clustering*) |
+| Prioridades de atenção | Combina desempenho, evolução, infraestrutura, tecnologia, recursos humanos e comparação com os pares em um nível de prioridade, sempre acompanhado dos motivos. | Indicadores por dimensão |
+
+## Recorte e dados
+
+Os dados vêm do **Censo Escolar da Educação Básica** e do **IDEB**, produzidos pelo Inep e obtidos por meio da [Base dos Dados](https://basedosdados.org/) no Google BigQuery. O recorte considera as escolas dos nove estados do Nordeste nos anos de **2019, 2021 e 2023** pelos seguintes motivos:
+
+- várias variáveis relevantes (água potável, internet, profissionais e materiais pedagógicos) só passam a ser coletadas pelo Censo a partir de 2019;
+- 19,36% dos registros do Censo de 2007 a 2024 não têm nenhum atributo além da identificação, e nenhum deles aparece no IDEB;
+- os três anos coincidem com as edições bienais do IDEB, o que permite o cruzamento direto sem interpolação.
+
+A base integrada tem como chave `id_escola + ano + anos_escolares` e reúne apenas escolas com desempenho observado no IDEB. A caracterização completa das fontes e a justificativa do recorte estão em [Caracterização dos dados — 2019, 2021 e 2023](docs/caracterizacao_2019+.md).
+
+## Situação atual
+
+| Etapa | Situação | Documento |
+| --- | --- | --- |
+| Atividade 01 — Escolha e caracterização dos dados | Concluída | [docs/atividade-01-dados.md](docs/atividade-01-dados.md) |
+| Atividade 02 — Pipeline de preparação e integração | Concluída | [docs/atividade-02-pipeline.md](docs/atividade-02-pipeline.md) |
+| Arquitetura do sistema (dados, banco, API e painel) | Próximo passo | — |
+| Modelos de anomalias, padrões e prioridades | Próximo passo | — |
+
+Pontos de atenção que orientam as próximas etapas:
+
+- cerca de 23% de valores ausentes em variáveis de infraestrutura, tecnologia e profissionais, que precisam ser entendidos antes de qualquer remoção ou imputação;
+- códigos especiais do Inep (88888 e 9) que são convertidos em ausência pelo pipeline;
+- associação não é causa: ano, UF, rede, localização, etapa e porte da escola afetam ao mesmo tempo a infraestrutura e o IDEB.
 
 ## Organização do repositório
 
