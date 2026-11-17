@@ -1,0 +1,222 @@
+{
+  "executado_em_utc": "2026-10-20T04:58:13.225989+00:00",
+  "entrada": "data/processed/atributos_escola_ano.csv",
+  "anos": [
+    2021
+  ],
+  "escolas_ano": 17472,
+  "conjunto_atributos": "indices",
+  "atributos": {
+    "salas_climatizadas_log": "infraestrutura_basica",
+    "orgao_gremio_estudantil": "gestao_e_oferta",
+    "noturno": "gestao_e_oferta",
+    "oferece_iniciais": "gestao_e_oferta",
+    "oferece_finais": "gestao_e_oferta",
+    "oferece_medio": "gestao_e_oferta",
+    "tem_nutricionista": "recursos_humanos",
+    "tem_psicologo": "recursos_humanos",
+    "profissional_pedagogia_100_alunos": "recursos_humanos",
+    "porte_log": "porte_e_composicao",
+    "prop_feminino": "porte_e_composicao",
+    "prop_raca_branca": "porte_e_composicao",
+    "prop_raca_preta": "porte_e_composicao",
+    "prop_raca_parda": "porte_e_composicao",
+    "prop_raca_amarela": "porte_e_composicao",
+    "prop_raca_indigena": "porte_e_composicao",
+    "prop_raca_nao_declarada": "porte_e_composicao",
+    "indice_infraestrutura_basica": "infraestrutura_basica",
+    "indice_espacos_pedagogicos": "espacos_pedagogicos",
+    "indice_tecnologia": "tecnologia",
+    "indice_materiais": "materiais"
+  },
+  "ponderacao_por_dimensao": true,
+  "escalonador": "StandardScaler ajustado só com 2021",
+  "pca": {
+    "variancia_alvo": 0.9,
+    "componentes": 13
+  },
+  "k_escolhido": 6,
+  "silhueta_k_escolhido": 0.1463,
+  "tamanhos_grupos": [
+    5704,
+    2791,
+    2606,
+    887,
+    3049,
+    2435
+  ],
+  "metricas_por_k": [
+    {
+      "k": 2,
+      "inercia": 86767.7857,
+      "silhueta": 0.2091,
+      "davies_bouldin": 1.8436,
+      "calinski_harabasz": 4759.7862,
+      "menor_grupo": 6913
+    },
+    {
+      "k": 3,
+      "inercia": 80435.7142,
+      "silhueta": 0.1397,
+      "davies_bouldin": 2.2331,
+      "calinski_harabasz": 3254.705,
+      "menor_grupo": 4245
+    },
+    {
+      "k": 4,
+      "inercia": 74697.5982,
+      "silhueta": 0.135,
+      "davies_bouldin": 2.1731,
+      "calinski_harabasz": 2783.6266,
+      "menor_grupo": 2863
+    },
+    {
+      "k": 5,
+      "inercia": 69592.3978,
+      "silhueta": 0.1436,
+      "davies_bouldin": 1.9659,
+      "calinski_harabasz": 2561.082,
+      "menor_grupo": 886
+    },
+    {
+      "k": 6,
+      "inercia": 65623.8684,
+      "silhueta": 0.1463,
+      "davies_bouldin": 1.8278,
+      "calinski_harabasz": 2383.8897,
+      "menor_grupo": 887
+    },
+    {
+      "k": 7,
+      "inercia": 63408.9008,
+      "silhueta": 0.1465,
+      "davies_bouldin": 1.8184,
+      "calinski_harabasz": 2157.5345,
+      "menor_grupo": 884
+    },
+    {
+      "k": 8,
+      "inercia": 61310.7201,
+      "silhueta": 0.1336,
+      "davies_bouldin": 1.9409,
+      "calinski_harabasz": 1997.8773,
+      "menor_grupo": 871
+    },
+    {
+      "k": 9,
+      "inercia": 59751.9508,
+      "silhueta": 0.1273,
+      "davies_bouldin": 1.9017,
+      "calinski_harabasz": 1850.5863,
+      "menor_grupo": 871
+    },
+    {
+      "k": 10,
+      "inercia": 58134.6917,
+      "silhueta": 0.105,
+      "davies_bouldin": 2.0401,
+      "calinski_harabasz": 1744.6033,
+      "menor_grupo": 875
+    }
+  ],
+  "estabilidade": {
+    "ari_entre_sementes": [
+      0.9993,
+      0.9947,
+      1.0
+    ],
+    "ari_entre_reamostragens": [
+      0.9759,
+      0.9867,
+      0.9474
+    ],
+    "ari_entre_anos": {}
+  },
+  "comparacao_algoritmos": {
+    "tamanho_amostra": 10000,
+    "ward": {
+      "silhueta": 0.0795,
+      "ari_com_kmeans": 0.29
+    },
+    "hdbscan": {
+      "min_cluster_size": 100,
+      "grupos": 2,
+      "fracao_ruido": 0.0115
+    }
+  },
+  "ari_standard_vs_robust": 0.1659,
+  "descricao_grupos": {
+    "0": {
+      "acima_da_media": {
+        "oferece_iniciais": 0.27,
+        "prop_raca_nao_declarada": 0.14,
+        "prop_raca_indigena": -0.0
+      },
+      "abaixo_da_media": {
+        "indice_espacos_pedagogicos": -0.81,
+        "indice_tecnologia": -0.76,
+        "indice_materiais": -0.67
+      }
+    },
+    "1": {
+      "acima_da_media": {
+        "indice_espacos_pedagogicos": 0.76,
+        "indice_infraestrutura_basica": 0.44,
+        "porte_log": 0.42
+      },
+      "abaixo_da_media": {
+        "indice_tecnologia": -0.48,
+        "indice_materiais": -0.47,
+        "tem_psicologo": -0.24
+      }
+    },
+    "2": {
+      "acima_da_media": {
+        "indice_materiais": 1.23,
+        "oferece_iniciais": 0.27,
+        "indice_infraestrutura_basica": 0.22
+      },
+      "abaixo_da_media": {
+        "indice_tecnologia": -0.38,
+        "oferece_medio": -0.3,
+        "tem_psicologo": -0.24
+      }
+    },
+    "3": {
+      "acima_da_media": {
+        "tem_psicologo": 4.17,
+        "tem_nutricionista": 1.86,
+        "profissional_pedagogia_100_alunos": 0.38
+      },
+      "abaixo_da_media": {
+        "oferece_medio": -0.34,
+        "orgao_gremio_estudantil": -0.22,
+        "prop_raca_preta": -0.08
+      }
+    },
+    "4": {
+      "acima_da_media": {
+        "indice_tecnologia": 1.12,
+        "prop_raca_branca": 0.14,
+        "oferece_finais": 0.1
+      },
+      "abaixo_da_media": {
+        "tem_psicologo": -0.24,
+        "indice_materiais": -0.21,
+        "indice_espacos_pedagogicos": -0.19
+      }
+    },
+    "5": {
+      "acima_da_media": {
+        "indice_espacos_pedagogicos": 1.36,
+        "oferece_medio": 1.32,
+        "indice_tecnologia": 1.32
+      },
+      "abaixo_da_media": {
+        "oferece_iniciais": -0.87,
+        "prop_raca_nao_declarada": -0.26,
+        "tem_nutricionista": -0.21
+      }
+    }
+  }
+}
