@@ -1,0 +1,226 @@
+{
+  "executado_em_utc": "2026-10-20T02:32:41.726628+00:00",
+  "entrada": {
+    "arquivo": "data/processed/base_integrada.csv",
+    "registros": 79374
+  },
+  "chave_saida": [
+    "id_escola",
+    "ano"
+  ],
+  "grupo_de_pares_imputacao": [
+    "ano",
+    "rede",
+    "tipo_localizacao"
+  ],
+  "limiar_quase_constante": 0.98,
+  "percentis_winsorizacao": [
+    0.01,
+    0.99
+  ],
+  "escolas_ano_em_mais_de_uma_etapa": 16916,
+  "linhas_removidas_por_duplicacao": 17049,
+  "colunas_excluidas_por_ausencia_estrutural": [
+    "laboratorio_educacao_profissional",
+    "quantidade_matricula_utiliza_transporte_publico",
+    "profissional_assistente_social"
+  ],
+  "imputacoes": {
+    "material_pedagogico_multimidia": {
+      "ausentes": 2102,
+      "pela_propria_escola_em_outro_ano": 1817,
+      "pelo_grupo_de_pares": 285
+    },
+    "material_pedagogico_infantil": {
+      "ausentes": 2102,
+      "pela_propria_escola_em_outro_ano": 1817,
+      "pelo_grupo_de_pares": 285
+    },
+    "material_pedagogico_cientifico": {
+      "ausentes": 2102,
+      "pela_propria_escola_em_outro_ano": 1817,
+      "pelo_grupo_de_pares": 285
+    },
+    "material_pedagogico_musical": {
+      "ausentes": 2102,
+      "pela_propria_escola_em_outro_ano": 1817,
+      "pelo_grupo_de_pares": 285
+    },
+    "material_pedagogico_artistica": {
+      "ausentes": 2102,
+      "pela_propria_escola_em_outro_ano": 1817,
+      "pelo_grupo_de_pares": 285
+    },
+    "orgao_gremio_estudantil": {
+      "ausentes": 482,
+      "pela_propria_escola_em_outro_ano": 417,
+      "pelo_grupo_de_pares": 65
+    },
+    "quantidade_profissional_saude": {
+      "ausentes": 2,
+      "pela_propria_escola_em_outro_ano": 2,
+      "pelo_grupo_de_pares": 0
+    },
+    "quantidade_profissional_nutricionista": {
+      "ausentes": 7,
+      "pela_propria_escola_em_outro_ano": 7,
+      "pelo_grupo_de_pares": 0
+    },
+    "quantidade_profissional_psicologo": {
+      "ausentes": 1,
+      "pela_propria_escola_em_outro_ano": 1,
+      "pelo_grupo_de_pares": 0
+    },
+    "quantidade_profissional_pedagogia": {
+      "ausentes": 28,
+      "pela_propria_escola_em_outro_ano": 20,
+      "pelo_grupo_de_pares": 8
+    }
+  },
+  "winsorizacao": {
+    "salas_climatizadas_log": {
+      "limite_inferior": 0.0,
+      "limite_superior": 2.890372,
+      "linhas_limitadas": 536
+    },
+    "porte_log": {
+      "limite_inferior": 4.025352,
+      "limite_superior": 7.198184,
+      "linhas_limitadas": 1204
+    },
+    "prop_feminino": {
+      "limite_inferior": 0.375,
+      "limite_superior": 0.602941,
+      "linhas_limitadas": 1242
+    },
+    "prop_raca_branca": {
+      "limite_inferior": 0.0,
+      "limite_superior": 0.499807,
+      "linhas_limitadas": 624
+    },
+    "prop_raca_preta": {
+      "limite_inferior": 0.0,
+      "limite_superior": 0.309492,
+      "linhas_limitadas": 624
+    },
+    "prop_raca_parda": {
+      "limite_inferior": 0.039438,
+      "limite_superior": 0.952615,
+      "linhas_limitadas": 1248
+    },
+    "prop_raca_amarela": {
+      "limite_inferior": 0.0,
+      "limite_superior": 0.061245,
+      "linhas_limitadas": 624
+    },
+    "prop_raca_indigena": {
+      "limite_inferior": 0.0,
+      "limite_superior": 0.055309,
+      "linhas_limitadas": 624
+    },
+    "prop_raca_nao_declarada": {
+      "limite_inferior": 0.0,
+      "limite_superior": 0.92912,
+      "linhas_limitadas": 624
+    },
+    "profissional_pedagogia_100_alunos": {
+      "limite_inferior": 0.0,
+      "limite_superior": 1.609438,
+      "linhas_limitadas": 622
+    }
+  },
+  "quase_constantes_removidas": {
+    "energia_rede_publica": 0.9986,
+    "cozinha": 0.9826,
+    "dormitorio_aluno": 0.9958,
+    "alimentacao": 0.9973,
+    "diurno": 0.993,
+    "tem_profissional_saude": 0.9932
+  },
+  "atributos_itens": {
+    "agua_potavel": "infraestrutura_basica",
+    "agua_rede_publica": "infraestrutura_basica",
+    "esgoto_rede_publica": "infraestrutura_basica",
+    "lixo_servico_coleta": "infraestrutura_basica",
+    "banheiro_chuveiro": "infraestrutura_basica",
+    "refeitorio": "infraestrutura_basica",
+    "biblioteca": "espacos_pedagogicos",
+    "sala_leitura": "espacos_pedagogicos",
+    "laboratorio_ciencias": "espacos_pedagogicos",
+    "quadra_esportes": "espacos_pedagogicos",
+    "area_verde": "espacos_pedagogicos",
+    "laboratorio_informatica": "tecnologia",
+    "desktop_aluno": "tecnologia",
+    "internet_alunos": "tecnologia",
+    "material_pedagogico_multimidia": "materiais",
+    "material_pedagogico_infantil": "materiais",
+    "material_pedagogico_cientifico": "materiais",
+    "material_pedagogico_musical": "materiais",
+    "material_pedagogico_artistica": "materiais",
+    "salas_climatizadas_log": "infraestrutura_basica",
+    "orgao_gremio_estudantil": "gestao_e_oferta",
+    "noturno": "gestao_e_oferta",
+    "oferece_iniciais": "gestao_e_oferta",
+    "oferece_finais": "gestao_e_oferta",
+    "oferece_medio": "gestao_e_oferta",
+    "tem_nutricionista": "recursos_humanos",
+    "tem_psicologo": "recursos_humanos",
+    "profissional_pedagogia_100_alunos": "recursos_humanos",
+    "porte_log": "porte_e_composicao",
+    "prop_feminino": "porte_e_composicao",
+    "prop_raca_branca": "porte_e_composicao",
+    "prop_raca_preta": "porte_e_composicao",
+    "prop_raca_parda": "porte_e_composicao",
+    "prop_raca_amarela": "porte_e_composicao",
+    "prop_raca_indigena": "porte_e_composicao",
+    "prop_raca_nao_declarada": "porte_e_composicao"
+  },
+  "atributos_indices": {
+    "indice_infraestrutura_basica": [
+      "agua_potavel",
+      "agua_rede_publica",
+      "energia_rede_publica",
+      "esgoto_rede_publica",
+      "lixo_servico_coleta",
+      "banheiro_chuveiro",
+      "cozinha",
+      "refeitorio"
+    ],
+    "indice_espacos_pedagogicos": [
+      "biblioteca",
+      "sala_leitura",
+      "laboratorio_ciencias",
+      "quadra_esportes",
+      "area_verde"
+    ],
+    "indice_tecnologia": [
+      "laboratorio_informatica",
+      "desktop_aluno",
+      "internet_alunos"
+    ],
+    "indice_materiais": [
+      "material_pedagogico_multimidia",
+      "material_pedagogico_infantil",
+      "material_pedagogico_cientifico",
+      "material_pedagogico_musical",
+      "material_pedagogico_artistica"
+    ]
+  },
+  "indicadores_imputacao": [
+    "materiais_imputados",
+    "gremio_imputado",
+    "profissionais_imputados"
+  ],
+  "saidas": {
+    "matriz": {
+      "arquivo": "data/processed/atributos_escola_ano.csv",
+      "registros": 62325,
+      "colunas": 50,
+      "duplicidades_na_chave": 0
+    },
+    "ligacao_etapas": {
+      "arquivo": "data/processed/ligacao_etapas.csv",
+      "registros": 79374
+    }
+  }
+}
