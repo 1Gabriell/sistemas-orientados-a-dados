@@ -15,11 +15,11 @@ Repositório do projeto da disciplina de pós-graduação **Sistemas Inteligente
 
 As três funcionalidades trabalham em conjunto: **perfil da escola → padrão do grupo → anomalia → prioridade explicada**.
 
-| Funcionalidade | Descrição | Abordagem prevista |
-| --- | --- | --- |
-| Detecção de anomalias | Sinaliza escolas que fogem do esperado para o seu grupo de pares, como desempenho destoante, quedas bruscas entre edições do IDEB ou combinações incomuns de características. | Isolation Forest, LOF ou métodos baseados em distância |
-| Descoberta de padrões | Agrupa as escolas por perfil a partir dos próprios dados, sem grupos definidos de antemão, e revela características associadas aos resultados. | Agrupamento (*clustering*) |
-| Prioridades de atenção | Combina desempenho, evolução, infraestrutura, tecnologia, recursos humanos e comparação com os pares em um nível de prioridade, sempre acompanhado dos motivos. | Indicadores por dimensão |
+| Funcionalidade | Descrição | Abordagem | Situação |
+| --- | --- | --- | --- |
+| Descoberta de padrões | Agrupa as escolas por perfil a partir dos próprios dados, sem grupos definidos de antemão, e revela características associadas aos resultados. | K-Means sobre índices de infraestrutura, espaços pedagógicos, tecnologia, materiais, profissionais, porte e etapas oferecidas: **6 grupos** | Primeira versão concluída |
+| Detecção de anomalias | Sinaliza escolas que fogem do esperado para o seu grupo de pares, como desempenho destoante, quedas bruscas entre edições do IDEB ou combinações incomuns de características. | Primeira versão: escolas abaixo do percentil 10 e acima do percentil 90 do IDEB dentro de grupo × etapa × ano, exibidas no mapa. Previsto: escore robusto, evolução entre edições, Isolation Forest ou LOF | Em andamento |
+| Prioridades de atenção | Combina desempenho, evolução, infraestrutura, tecnologia, recursos humanos e comparação com os pares em um nível de prioridade, sempre acompanhado dos motivos. | Indicadores por dimensão | Prevista |
 
 ## Recorte e dados
 
@@ -37,15 +37,34 @@ A base integrada tem como chave `id_escola + ano + anos_escolares` e reúne apen
 | --- | --- | --- |
 | Atividade 01 — Escolha e caracterização dos dados | Concluída | [docs/atividade-01-dados.md](docs/atividade-01-dados.md) |
 | Atividade 02 — Pipeline de preparação e integração | Concluída | [docs/atividade-02-pipeline.md](docs/atividade-02-pipeline.md) |
+| Atividade 03 — Descoberta de padrões (agrupamento) | Primeira versão concluída | [docs/atividade-03-agrupamento.md](docs/atividade-03-agrupamento.md), [docs/agrupamento-por-ano.md](docs/agrupamento-por-ano.md) e [docs/calculo-dos-destaques.md](docs/calculo-dos-destaques.md) |
+| Mapa interativo (IDEB, grupos e destaque P10/P90) | Primeira versão concluída | [visualizacao/README.md](visualizacao/README.md) |
+| Detecção de anomalias e prioridades | Em andamento | [docs/proximos_passos.md](docs/proximos_passos.md) |
 | Arquitetura do sistema (dados, banco, API e painel) | Próximo passo | — |
-| Atividade 03 — Descoberta de padrões (agrupamento) | Primeira versão concluída | [docs/atividade-03-agrupamento.md](docs/atividade-03-agrupamento.md) e [docs/agrupamento-por-ano.md](docs/agrupamento-por-ano.md) |
-| Modelos de anomalias e prioridades | Próximo passo | [docs/proximos_passos.md](docs/proximos_passos.md) |
+
+### Resultados até aqui
+
+O agrupamento (três anos juntos, 62.325 escolas-ano) encontrou seis perfis de escola, que se repetem quando cada ano é agrupado separadamente (96% a 98% das escolas no mesmo grupo):
+
+| Grupo | Perfil | % das escolas-ano |
+| --- | --- | --- |
+| 0 | Recursos mínimos | 31% |
+| 1 | Espaços sem tecnologia | 16% |
+| 2 | Materiais sem tecnologia | 15% |
+| 3 | Apoio multiprofissional | 7% |
+| 4 | Tecnologia sem espaços | 17% |
+| 5 | Estrutura completa | 15% |
+
+O IDEB acompanha o nível de recursos (menor no grupo 0, maior no grupo 5), mas varia muito dentro de cada grupo. Essa variação entre escolas de perfil parecido é a base da detecção de anomalias.
 
 Pontos de atenção que orientam as próximas etapas:
 
-- cerca de 23% de valores ausentes em variáveis de infraestrutura, tecnologia e profissionais, que precisam ser entendidos antes de qualquer remoção ou imputação;
-- códigos especiais do Inep (88888 e 9) que são convertidos em ausência pelo pipeline;
-- associação não é causa: ano, UF, rede, localização, etapa e porte da escola afetam ao mesmo tempo a infraestrutura e o IDEB.
+- **valores ausentes:** a maior parte é estrutural (variáveis que o Censo não coletou em todos os anos) e foi excluída da matriz do agrupamento; o restante (3,4% das escolas-ano) é imputado pelo pipeline 02, com indicadores das linhas imputadas;
+- **códigos especiais do Inep** (88888 e 9) são convertidos em ausência pelo pipeline 01;
+- **grupos como tipologia:** a silhueta é baixa (cerca de 0,14), ou seja, as escolas formam um contínuo; os grupos servem para definir pares comparáveis, não como tipos naturais de escola;
+- **IDEB de 2021:** não é comparável com os outros anos por causa da aprovação quase universal durante a pandemia;
+- **coordenadas:** 12,6% das escolas não têm latitude e longitude (sobretudo na Bahia e na zona rural) e não aparecem na camada de escolas do mapa;
+- **associação não é causa:** ano, UF, rede, localização, etapa e porte da escola afetam ao mesmo tempo a infraestrutura e o IDEB.
 
 ## Organização do repositório
 
@@ -69,10 +88,26 @@ Pontos de atenção que orientam as próximas etapas:
 | scikit-learn | 1.5 ou superior e inferior a 2.0 | Padronizar os atributos e ajustar os modelos de agrupamento. |
 | Ambiente virtual | Recomendado | Isolar as dependências do projeto das demais instalações do sistema. |
 | Jupyter Notebook ou editor compatível | Opcional | Abrir e executar os arquivos da pasta `notebooks/`. |
+| Navegador com acesso à internet | Opcional | Abrir o mapa interativo; o mapa de fundo e a biblioteca Leaflet são carregados da internet. |
 
 Os arquivos CSV necessários para o processamento já estão organizados na pasta `data/`. O acesso ao Google BigQuery não é necessário para trabalhar com os dados existentes; ele é necessário apenas caso se deseje executar novamente as consultas SQL de extração.
 
 As dependências obrigatórias são instaladas a partir de `requirements.txt`. As instruções de preparação do ambiente, execução do código e testes estão em [pipelines/README.md](pipelines/README.md).
+
+## Como executar
+
+A partir da raiz do repositório, com o ambiente virtual ativo:
+
+```bash
+python pipelines/pipeline_01.py               # Censo + IDEB → data/processed/base_integrada.csv
+python pipelines/pipeline_02_atributos.py     # base integrada → matriz de atributos por escola-ano
+python modelos/agrupamento.py                 # agrupamento conjunto → data/processed/agrupamento/
+python modelos/agrupamento.py --ano 2023      # agrupamento de um único ano → data/processed/agrupamento/2023/
+python visualizacao/preparar_dados_mapa.py    # tabelas e página visualizacao/mapa_municipios.html
+python -m unittest discover -s pipelines/tests -v
+```
+
+Cada etapa usa os resultados da anterior, que já estão versionados em `data/processed/`; não é preciso executar tudo para abrir os notebooks ou o mapa.
 
 ## Arquitetura do projeto
 
@@ -88,13 +123,18 @@ Base dos Dados / Google BigQuery
    pipelines/ - processamento e testes
                 |
                 v
-       data/processed/ - resultados
+       data/processed/ - resultados  <------+
+                |                           |
+        +-------+--------+---------+        |
+        |                |         |        |
+        v                v         v        |
+   notebooks/        modelos/   visualizacao/
+   análises          agrupamento   mapa interativo
+        |                |         |
+        +-------+--------+---------+
                 |
-        +-------+-------+
-        |               |
-        v               v
-   notebooks/         docs/
-   análises           documentação
+                v
+             docs/ - documentação
 ```
 
 | Camada | Responsabilidade |
@@ -102,7 +142,9 @@ Base dos Dados / Google BigQuery
 | Dados de origem | Armazenar as consultas de extração e os arquivos recebidos das fontes externas. |
 | Processamento | Concentrar o código responsável por preparar e integrar os dados, junto aos testes automatizados correspondentes. |
 | Dados processados | Manter os resultados produzidos pelo processamento separados das entradas originais. |
-| Análise | Explorar os dados, avaliar sua qualidade e apoiar a investigação do problema do projeto. |
+| Modelos | Ajustar os modelos sobre os dados processados (hoje, o agrupamento) e gravar os resultados em `data/processed/`. |
+| Visualização | Combinar os resultados em páginas para consulta, como o mapa interativo de escolas e municípios. |
+| Análise | Explorar os dados, avaliar sua qualidade e interpretar os resultados dos modelos. |
 | Documentação | Registrar decisões, características das bases, evidências e entregas de cada atividade. |
 
-Os componentes possuem documentação própria quando necessário. As bases são descritas em [data/README.md](data/README.md), enquanto as instruções para executar o código e os testes ficam em [pipelines/README.md](pipelines/README.md).
+Os componentes possuem documentação própria quando necessário. As bases são descritas em [data/README.md](data/README.md), as instruções para executar o código e os testes ficam em [pipelines/README.md](pipelines/README.md), e o mapa é descrito em [visualizacao/README.md](visualizacao/README.md).
