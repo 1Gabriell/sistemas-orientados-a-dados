@@ -16,6 +16,7 @@ Tabelas CSV e consultas SQL do Censo Escolar e do IDEB para o **Nordeste**, obti
 | [ideb_nordeste.csv](ideb_nordeste.csv) | IDEB, projeções e identificação das escolas, com 12 atributos e valores ausentes em `ideb`. |
 | [ideb_nordeste_sem_nulos.csv](ideb_nordeste_sem_nulos.csv) | Versão com indicadores de aprovação, rendimento e desempenho, com 14 atributos e registros anteriores a 2019. |
 | [ideb_nordeste_2019+.csv](ideb_nordeste_2019+.csv) | IDEB no recorte atualizado: **79.374 registros × 14 atributos**. |
+| [escolas_coordenadas_nordeste.csv](escolas_coordenadas_nordeste.csv) | Latitude e longitude das escolas do Nordeste, uma linha por escola: **32.300 escolas**, das quais 26.224 com coordenadas. Recorte de um arquivo de localização com todas as escolas do país presentes no IDEB de 2005 a 2025, mantendo os 9 estados do Nordeste e a linha do ano mais recente de cada escola (a coordenada não muda entre os anos). Cobre 22.928 das 26.233 escolas da análise (87,4%). |
 
 ## Consultas SQL
 
@@ -28,3 +29,13 @@ Tabelas CSV e consultas SQL do Censo Escolar e do IDEB para o **Nordeste**, obti
 
 
 A chave da base integrada é **`id_escola + ano + anos_escolares`**. Como o arquivo do Censo tem granularidade de escola e ano e não possui `anos_escolares`, o pipeline associa primeiro a cada registro do Censo as etapas únicas observadas no IDEB. O cruzamento final é então validado como 1:1 pelas três colunas. Veja o [README principal](../README.md) e a [caracterização e avaliação de qualidade](../docs/caracterizacao_2019+.md) para mais detalhes.
+
+## Resultados processados
+
+| Arquivo | Gerado por | Descrição |
+| --- | --- | --- |
+| [processed/base_integrada.csv](processed/base_integrada.csv) | `pipeline_01.py` | Censo + IDEB por escola, ano e etapa: **79.374 registros × 61 colunas**. |
+| [processed/atributos_escola_ano.csv](processed/atributos_escola_ano.csv) | `pipeline_02_atributos.py` | Matriz de atributos para o agrupamento, uma linha por escola e ano: **62.325 registros**. |
+| [processed/ligacao_etapas.csv](processed/ligacao_etapas.csv) | `pipeline_02_atributos.py` | Liga cada escola-ano às etapas avaliadas e aos resultados do IDEB. |
+| [processed/agrupamento/](processed/agrupamento/) | `modelos/agrupamento.py` | Grupo de cada escola-ano, perfil dos grupos e métricas do agrupamento conjunto (três anos juntos). |
+| [processed/agrupamento/2019/](processed/agrupamento/2019/), [2021/](processed/agrupamento/2021/), [2023/](processed/agrupamento/2023/) | `modelos/agrupamento.py --ano <ano>` | Os mesmos arquivos para o agrupamento feito separadamente em cada ano. |

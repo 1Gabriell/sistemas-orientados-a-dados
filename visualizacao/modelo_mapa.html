@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa das Escolas</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root {
+  --surface-0: #f7f6f3;
+  --surface-1: #ffffff;
+  --border: #e4e2dc;
+  --text-primary: #1f1e1c;
+  --text-secondary: #4d4c47;
+  --text-muted: #6f6e68;
+  --accent: #2a78d6;
+  --sem-dado: #bdbcb5;
+  --anel: #ffffff;
+  --seq-1: #86b6ef; --seq-2: #5598e7; --seq-3: #2a78d6; --seq-4: #1c5cab; --seq-5: #0d366b;
+  /* Cores fixas das escolas abaixo do P10 e acima do P90, iguais em todos os grupos. */
+  --abaixo: #e34948; --acima: #6250d6;
+  /* Uma escala de um só matiz por grupo (claro → escuro), validada como escala ordinal.
+     Grupo 0 usa a escala azul do IDEB; os demais seguem a ordem fixa da paleta categórica. */
+  --g0-1: var(--seq-1); --g0-2: var(--seq-2); --g0-3: var(--seq-3); --g0-4: var(--seq-4); --g0-5: var(--seq-5);
+  --g1-1: #f7936e; --g1-2: #e06b3f; --g1-3: #bd4c1c; --g1-4: #953302; --g1-5: #6b2200;
+  --g2-1: #6ec69d; --g2-2: #33aa7a; --g2-3: #088a5e; --g2-4: #006946; --g2-5: #004930;
+  --g3-1: #dea551; --g3-2: #c38400; --g3-3: #9c6903; --g3-4: #774f00; --g3-5: #543601;
+  --g4-1: #e894b1; --g4-2: #cf6f93; --g4-3: #ad5175; --g4-4: #8d3358; --g4-5: #6c143e;
+  --g5-1: #77c271; --g5-2: #4ca947; --g5-3: #2c8b27; --g5-4: #016c01; --g5-5: #014c01;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface-0: #141413;
+    --surface-1: #1f1f1d;
+    --border: #383835;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --text-muted: #9a998f;
+    --accent: #3987e5;
+    --sem-dado: #5a5955;
+    --anel: #1f1f1d;
+    --seq-1: #184f95; --seq-2: #256abf; --seq-3: #3987e5; --seq-4: #6da7ec; --seq-5: #b7d3f6;
+    --abaixo: #e66767; --acima: #9085e9;
+    --g0-1: var(--seq-1); --g0-2: var(--seq-2); --g0-3: var(--seq-3); --g0-4: var(--seq-4); --g0-5: var(--seq-5);
+    --g1-1: #8d3001; --g1-2: #b64513; --g1-3: #d96538; --g1-4: #ff885c; --g1-5: #fec1ab;
+    --g2-1: #046242; --g2-2: #068359; --g2-3: #2ba474; --g2-4: #56c795; --g2-5: #9ee3c0;
+    --g3-1: #6f4a04; --g3-2: #946303; --g3-3: #ba7e08; --g3-4: #e39f2c; --g3-5: #f6c888;
+    --g4-1: #862d53; --g4-2: #a74b6f; --g4-3: #c8698d; --g4-4: #ee8aae; --g4-5: #ffbbd1;
+    --g5-1: #006500; --g5-2: #248520; --g5-3: #47a442; --g5-4: #6bc764; --g5-5: #a8e3a2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface-0: #141413;
+  --surface-1: #1f1f1d;
+  --border: #383835;
+  --text-primary: #f0efec;
+  --text-secondary: #c3c2b7;
+  --text-muted: #9a998f;
+  --accent: #3987e5;
+  --sem-dado: #5a5955;
+  --anel: #1f1f1d;
+  --seq-1: #184f95; --seq-2: #256abf; --seq-3: #3987e5; --seq-4: #6da7ec; --seq-5: #b7d3f6;
+  --abaixo: #e66767; --acima: #9085e9;
+  --g0-1: var(--seq-1); --g0-2: var(--seq-2); --g0-3: var(--seq-3); --g0-4: var(--seq-4); --g0-5: var(--seq-5);
+  --g1-1: #8d3001; --g1-2: #b64513; --g1-3: #d96538; --g1-4: #ff885c; --g1-5: #fec1ab;
+  --g2-1: #046242; --g2-2: #068359; --g2-3: #2ba474; --g2-4: #56c795; --g2-5: #9ee3c0;
+  --g3-1: #6f4a04; --g3-2: #946303; --g3-3: #ba7e08; --g3-4: #e39f2c; --g3-5: #f6c888;
+  --g4-1: #862d53; --g4-2: #a74b6f; --g4-3: #c8698d; --g4-4: #ee8aae; --g4-5: #ffbbd1;
+  --g5-1: #006500; --g5-2: #248520; --g5-3: #47a442; --g5-4: #6bc764; --g5-5: #a8e3a2;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+header { padding: 14px 16px 8px; }
+h1 { font-size: 18px; margin: 0 0 2px; font-weight: 600; }
+.subtitulo { color: var(--text-secondary); margin: 0; font-size: 13px; }
+.controles {
+  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  padding: 8px 16px 12px; border-bottom: 1px solid var(--border);
+}
+.controle { display: flex; align-items: center; gap: 8px; }
+.controle > span { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.segmentado { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface-1); }
+.segmentado button {
+  border: 0; background: transparent; color: var(--text-secondary); padding: 6px 12px; font: inherit; cursor: pointer;
+}
+.segmentado button + button { border-left: 1px solid var(--border); }
+.segmentado button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.segmentado button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+select {
+  font: inherit; color: var(--text-primary); background: var(--surface-1);
+  border: 1px solid var(--border); border-radius: 8px; padding: 5px 8px; max-width: 100%;
+}
+[hidden] { display: none !important; }
+.aviso-fundo { position: absolute; z-index: 1000; left: 56px; top: 10px; margin: 0; max-width: 360px; }
+main { flex: 1; display: grid; grid-template-columns: 1fr 320px; min-height: 0; }
+#mapa { min-height: 420px; background: var(--surface-0); }
+aside {
+  border-left: 1px solid var(--border); background: var(--surface-1);
+  padding: 14px 16px; overflow-y: auto;
+}
+aside h2 { font-size: 13px; margin: 0 0 8px; color: var(--text-secondary); font-weight: 600; }
+aside section + section { margin-top: 18px; }
+.legenda-item { display: flex; align-items: center; gap: 8px; margin: 3px 0; color: var(--text-secondary); }
+.amostra { width: 14px; height: 14px; border-radius: 50%; flex: none; border: 1px solid var(--anel); }
+.nota { color: var(--text-muted); font-size: 12px; margin: 8px 0 0; }
+.aviso {
+  font-size: 12px; color: var(--text-secondary); background: var(--surface-0);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-top: 10px;
+}
+.ranking { list-style: none; margin: 0; padding: 0; }
+.ranking li {
+  display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 5px 0;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.ranking li:hover .nome-mun { color: var(--accent); }
+.ranking .valor { font-variant-numeric: tabular-nums; color: var(--text-primary); }
+.ranking .uf { color: var(--text-muted); }
+.leaflet-container { font: inherit; background: var(--surface-0); }
+
+.leaflet-tooltip.dica {
+  background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
+  border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.15); padding: 10px 12px; max-width: 300px; white-space: normal;
+}
+.leaflet-tooltip.dica::before { display: none; }
+.leaflet-tooltip.dica { min-width: 200px; }
+.dica strong { display: block; font-size: 13px; }
+.dica .sec { color: var(--text-muted); font-size: 12px; }
+.detalhe { background: var(--surface-0); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.detalhe strong { display: block; font-size: 14px; }
+.detalhe .sec { color: var(--text-muted); font-size: 12px; }
+.detalhe table { border-collapse: collapse; margin-top: 8px; width: 100%; font-size: 12px; }
+.detalhe td { padding: 2px 0; color: var(--text-secondary); vertical-align: top; }
+.detalhe td.num { text-align: right; color: var(--text-primary); font-variant-numeric: tabular-nums; padding-left: 8px; white-space: nowrap; }
+.barra { height: 6px; border-radius: 3px; background: var(--sem-dado); }
+.barra.sel { background: var(--cor-grupo, var(--accent)); }
+.detalhe td.barra-cel { width: 70px; padding-left: 8px; vertical-align: middle; }
+.leaflet-control-attribution { background: var(--surface-1) !important; color: var(--text-muted) !important; }
+.leaflet-control-attribution a { color: var(--text-secondary) !important; }
+@media (max-width: 760px) {
+  main { grid-template-columns: 1fr; grid-template-rows: 60vh auto; }
+  aside { border-left: 0; border-top: 1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Escolas públicas do Nordeste: IDEB e perfis</h1>
+  <p class="subtitulo">Cada círculo é um município, com tamanho proporcional ao número de escolas com IDEB. Aproxime o zoom para ver as escolas.</p>
+</header>
+
+<div class="controles">
+  <div class="controle">
+    <span>Indicador</span>
+    <div class="segmentado" role="group" aria-label="Indicador">
+      <button type="button" data-indicador="ideb" aria-pressed="true">IDEB</button>
+      <button type="button" data-indicador="grupo" aria-pressed="false">Grupos</button>
+    </div>
+  </div>
+  <div class="controle">
+    <span>Ano</span>
+    <div class="segmentado" role="group" aria-label="Ano" id="anos"></div>
+  </div>
+  <div class="controle" id="controle-etapa">
+    <span>Etapa</span>
+    <select id="etapa" aria-label="Etapa"></select>
+  </div>
+  <div class="controle" id="controle-grupo" hidden>
+    <span>Grupo</span>
+    <span class="amostra" id="amostra-grupo" aria-hidden="true"></span>
+    <select id="grupo" aria-label="Grupo"></select>
+  </div>
+  <div class="controle" id="controle-destaque" hidden>
+    <span>Destaque P10 / P90</span>
+    <div class="segmentado" role="group" aria-label="Destaque das escolas abaixo do percentil 10 e acima do percentil 90">
+      <button type="button" data-destaque="nenhum" aria-pressed="true">Desligado</button>
+      <button type="button" data-destaque="ambos" aria-pressed="false">Abaixo e acima</button>
+      <button type="button" data-destaque="abaixo" aria-pressed="false">Só abaixo</button>
+      <button type="button" data-destaque="acima" aria-pressed="false">Só acima</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div id="mapa" role="region" aria-label="Mapa">
+    <div id="aviso-fundo" class="aviso aviso-fundo" hidden>O mapa de fundo não carregou (sem internet ou serviço bloqueado). Os dados continuam visíveis.</div>
+  </div>
+  <aside>
+    <section>
+      <h2>Detalhe</h2>
+      <div id="detalhe" class="detalhe"><p class="nota" style="margin:0">Passe o mouse ou toque num município ou numa escola para ver os detalhes.</p></div>
+    </section>
+    <section>
+      <h2 id="titulo-legenda"></h2>
+      <div id="legenda"></div>
+      <p class="nota" id="nota-legenda"></p>
+      <div class="aviso" id="aviso-2021" hidden>
+        O IDEB de 2021 não é comparável com o dos outros anos: a aprovação foi quase universal durante a pandemia, o que eleva o indicador sem melhora no Saeb.
+      </div>
+    </section>
+    <section>
+      <h2 id="titulo-ranking"></h2>
+      <div class="segmentado" role="group" aria-label="Ordem" style="margin-bottom:8px">
+        <button type="button" data-ordem="desc" aria-pressed="true">Maiores</button>
+        <button type="button" data-ordem="asc" aria-pressed="false">Menores</button>
+      </div>
+      <ol class="ranking" id="ranking"></ol>
+      <p class="nota">Só municípios com pelo menos 5 escolas (no IDEB, com resultado na etapa escolhida). Clique para localizar no mapa.</p>
+    </section>
+    <section>
+      <h2>Sobre os dados</h2>
+      <p class="nota" style="margin-top:0">
+        Escolas públicas com IDEB em 2019, 2021 e 2023. Grupos do agrupamento conjunto (K-Means, três anos juntos).
+        A posição do município é a mediana das coordenadas das suas escolas; 12 municípios sem nenhuma escola com coordenada ficam de fora.
+        Cerca de 11% das escolas não têm coordenada (sobretudo na Bahia e na zona rural) e não aparecem na camada de escolas, mas entram nos resumos dos municípios.
+      </p>
+    </section>
+  </aside>
+</main>
+
+<script>
+const DADOS = /*__DADOS_MAPA__*/null;
+
+const ZOOM_ESCOLAS = 10;
+const MIN_ESCOLAS_RANKING = 5;
+// Faixas fixas para que as cores sejam comparáveis entre anos e etapas.
+// Os limites aproximam os quintis das medianas municipais de 2019, 2021 e 2023 juntos.
+const FAIXAS_IDEB = [
+  [4.2, 4.6, 5.0, 5.5],  // anos iniciais
+  [3.6, 4.0, 4.4, 4.8],  // anos finais
+  [3.3, 3.7, 4.0, 4.4],  // ensino médio
+];
+// % das escolas do município no grupo; a primeira faixa é "nenhuma escola".
+const FAIXAS_GRUPO = [1, 15, 30, 50];
+
+const estado = { indicador: "ideb", ano: String(DADOS.anos[DADOS.anos.length - 1]), etapa: 0, grupo: 0, ordem: "desc", destaque: "nenhum" };
+
+// ---------- destaque P10 / P90 ----------
+// Faixa de cada escola na etapa: -1 abaixo do P10, 0 entre P10 e P90, 1 acima do P90,
+// 9 combinação grupo × etapa × ano com poucas escolas (não classificada), null sem IDEB.
+const emDestaque = () => estado.indicador === "grupo" && estado.destaque !== "nenhum";
+const faixaEscola = (e) => e[12 + estado.etapa];
+const mostraAbaixo = () => estado.destaque === "ambos" || estado.destaque === "abaixo";
+const mostraAcima = () => estado.destaque === "ambos" || estado.destaque === "acima";
+const LIMITES = new Map(DADOS.limites.map(([ano, grupo, etapa, p10, p90, n]) => [`${ano}|${grupo}|${etapa}`, { p10, p90, n }]));
+const limitesAtuais = (grupo = estado.grupo, etapa = estado.etapa, ano = estado.ano) => LIMITES.get(`${ano}|${grupo}|${etapa}`);
+function destacada(e) {
+  const f = faixaEscola(e);
+  return (f === -1 && mostraAbaixo()) || (f === 1 && mostraAcima());
+}
+
+const css = (nome) => getComputedStyle(document.documentElement).getPropertyValue(nome).trim();
+const formatar = (v, casas = 1) => v == null ? "—" : v.toLocaleString("pt-BR", { minimumFractionDigits: casas, maximumFractionDigits: casas });
+
+// ---------- mapa e camadas ----------
+// Zoom só em níveis inteiros: em níveis fracionados o fundo mostra retângulos de imagens sobrepostas.
+const mapa = L.map("mapa", { preferCanvas: true }).fitBounds([[-18.4, -48.8], [-1.0, -34.7]]);
+let camadaFundo = null;
+let camadaRotulos = null;
+function aplicarFundo() {
+  const escuro = matchMedia("(prefers-color-scheme: dark)").matches && document.documentElement.dataset.theme !== "light"
+    || document.documentElement.dataset.theme === "dark";
+  if (camadaFundo) mapa.removeLayer(camadaFundo);
+  if (camadaRotulos) mapa.removeLayer(camadaRotulos);
+  // Fundo cinza da Esri, que aceita páginas abertas como arquivo local. O OpenStreetMap
+  // bloqueia esses pedidos ("Access blocked") porque eles chegam sem o endereço de origem.
+  const estilo = escuro ? "World_Dark_Gray_Base" : "World_Light_Gray_Base";
+  camadaFundo = L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${estilo}/MapServer/tile/{z}/{y}/{x}`, {
+    attribution: "Fundo &copy; Esri, HERE, Garmin, &copy; colaboradores do OpenStreetMap",
+    maxZoom: 16,
+  }).addTo(mapa);
+  // Nomes de cidades e estados, por cima do fundo e por baixo dos dados.
+  camadaRotulos = L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${estilo.replace("Base", "Reference")}/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: 16,
+  }).addTo(mapa);
+  // Se o fundo falhar de forma generalizada (sem internet ou serviço bloqueado), ele é
+  // removido para não cobrir o mapa com imagens de erro; os dados continuam visíveis.
+  let falhas = 0;
+  camadaFundo.on("tileerror", () => {
+    falhas += 1;
+    if (falhas === 8) {
+      mapa.removeLayer(camadaFundo);
+      mapa.removeLayer(camadaRotulos);
+      document.getElementById("aviso-fundo").hidden = false;
+    }
+  });
+}
+aplicarFundo();
+
+const camadaMunicipios = L.layerGroup().addTo(mapa);
+const camadaEscolas = L.layerGroup().addTo(mapa);
+
+// ---------- valores e cores ----------
+function valorMunicipio(m) {
+  const d = m.anos[estado.ano];
+  if (!d) return null;
+  if (estado.indicador === "ideb") return d.i[estado.etapa];
+  return d.g[estado.grupo] == null ? null : 100 * d.g[estado.grupo];
+}
+function valorEscola(e) {
+  if (estado.indicador === "ideb") return e[8 + estado.etapa];
+  return e[7] === estado.grupo ? 100 : 0;
+}
+function faixas() { return estado.indicador === "ideb" ? FAIXAS_IDEB[estado.etapa] : FAIXAS_GRUPO; }
+// Prefixo da escala em uso: azul no IDEB, a cor do grupo escolhido em Grupos.
+const escala = () => estado.indicador === "ideb" ? "--seq-" : `--g${estado.grupo}-`;
+function cor(valor) {
+  if (valor == null) return css("--sem-dado");
+  const f = faixas();
+  let i = f.findIndex((limite) => valor < limite);
+  if (i === -1) i = f.length;
+  return css(`${escala()}${i + 1}`);
+}
+const raio = (escolas) => 2 + Math.sqrt(escolas) * 0.8;
+
+// ---------- dicas (tooltips) ----------
+function detalheMunicipio(m) {
+  const d = m.anos[estado.ano];
+  if (!d) return `<strong>${m.nome} (${m.uf})</strong><span class="sec">Sem escolas com IDEB em ${estado.ano}.</span>`;
+  const linhasIdeb = DADOS.etapas.map((nome, i) =>
+    `<tr><td>${nome}</td><td class="num">${formatar(d.i[i])}</td><td class="num sec">${d.n[i] ? d.n[i] + " esc." : ""}</td></tr>`).join("");
+  const linhasGrupos = DADOS.grupos.map((nome, i) => {
+    const p = d.g[i] || 0;
+    const sel = estado.indicador === "grupo" && i === estado.grupo;
+    return `<tr><td>${i} · ${nome}</td><td class="barra-cel"><div class="barra${sel ? " sel" : ""}" style="width:${Math.max(2, p * 100)}%"></div></td><td class="num">${formatar(100 * p, 0)}%</td></tr>`;
+  }).join("");
+  return `<strong>${m.nome} (${m.uf})</strong>
+    <span class="sec">${estado.ano} · ${d.e} escolas com IDEB · ${d.c} com coordenada</span>
+    <table><tr><td colspan="3" class="sec">IDEB mediano</td></tr>${linhasIdeb}</table>
+    <table><tr><td colspan="3" class="sec">Escolas por grupo</td></tr>${linhasGrupos}</table>`;
+}
+function detalheEscola(e) {
+  const ideb = DADOS.etapas.map((nome, i) => {
+    if (e[8 + i] == null) return "";
+    const lim = limitesAtuais(e[7], i, e[2]);
+    const faixa = e[12 + i] == null ? "" : `<br><span class="sec">${textoFaixa(e[12 + i])}${lim && lim.p10 != null ? ` do grupo (P10 ${formatar(lim.p10, 2)} · P90 ${formatar(lim.p90, 2)})` : ""}</span>`;
+    return `<tr><td>${nome}${faixa}</td><td class="num">${formatar(e[8 + i])}</td></tr>`;
+  }).join("");
+  return `<strong>${e[1] || "Escola " + e[0]}</strong>
+    <span class="sec">${MUNICIPIOS_POR_ID.has(e[11]) ? `${MUNICIPIOS_POR_ID.get(e[11]).nome} (${MUNICIPIOS_POR_ID.get(e[11]).uf}) · ` : ""}${e[2]} · ${e[5]} · ${e[6]} · código ${e[0]}</span>
+    <table><tr><td>Grupo</td><td class="num">${e[7]} · ${DADOS.grupos[e[7]]}</td></tr>${ideb}</table>`;
+}
+
+function dicaCurta(titulo, valor) {
+  return `<strong>${titulo}</strong><span class="sec">${valor}</span>`;
+}
+function textoValor(v) {
+  if (estado.indicador === "ideb") return `IDEB ${DADOS.etapas[estado.etapa].toLowerCase()}: ${formatar(v)}`;
+  return `${formatar(v, 0)}% no grupo ${estado.grupo}`;
+}
+const MUNICIPIOS_POR_ID = new Map(DADOS.municipios.map((m) => [m.id, m]));
+
+// Guarda o último item mostrado para refazer o painel quando o ano ou o indicador mudam.
+let ultimoDetalhe = null;
+function mostrarDetalhe(gerar) { ultimoDetalhe = gerar; document.getElementById("detalhe").innerHTML = gerar(); }
+
+// ---------- desenho ----------
+function desenharMunicipios() {
+  camadaMunicipios.clearLayers();
+  const anel = css("--anel");
+  const visiveis = DADOS.municipios.filter((m) => m.anos[estado.ano]);
+  // Os maiores primeiro, para que os pequenos fiquem por cima.
+  visiveis.sort((a, b) => b.anos[estado.ano].e - a.anos[estado.ano].e);
+  for (const m of visiveis) {
+    const v = valorMunicipio(m);
+    // No destaque P10 / P90, os municípios ficam neutros para que só as escolas tenham cor.
+    const circulo = L.circleMarker([m.lat, m.lon], {
+      radius: raio(m.anos[estado.ano].e),
+      color: anel, weight: 1,
+      fillColor: emDestaque() ? css("--sem-dado") : cor(v),
+      fillOpacity: emDestaque() ? 0.25 : (v == null ? 0.5 : 0.9),
+    });
+    circulo.bindTooltip(() => dicaCurta(`${m.nome} (${m.uf})`, textoValor(valorMunicipio(m))), { className: "dica", sticky: true });
+    circulo.on("mouseover click", () => mostrarDetalhe(() => detalheMunicipio(m)));
+    circulo.addTo(camadaMunicipios);
+  }
+}
+function desenharEscolas() {
+  camadaEscolas.clearLayers();
+  const comEscolas = mapa.getZoom() >= ZOOM_ESCOLAS;
+  const anel = css("--anel");
+  const ano = Number(estado.ano);
+  if (emDestaque()) {
+    desenharDestaque(comEscolas, anel, ano);
+    return;
+  }
+  camadaMunicipios.eachLayer((c) => c.setStyle({ fillOpacity: comEscolas ? 0.15 : 0.9, opacity: comEscolas ? 0.3 : 1 }));
+  if (!comEscolas) return;
+  const limites = mapa.getBounds().pad(0.2);
+  for (const e of DADOS.escolas) {
+    if (e[2] !== ano || !limites.contains([e[3], e[4]])) continue;
+    let v = valorEscola(e);
+    let preenchimento;
+    if (estado.indicador === "grupo") preenchimento = v === 100 ? css(`--g${estado.grupo}-4`) : css("--sem-dado");
+    else preenchimento = cor(v);
+    const ponto = L.circleMarker([e[3], e[4]], {
+      radius: estado.indicador === "grupo" && v !== 100 ? 4 : 5.5,
+      color: anel, weight: 1.5, fillColor: preenchimento, fillOpacity: 0.95,
+    });
+    ligarEscola(ponto, e);
+    ponto.addTo(camadaEscolas);
+  }
+}
+
+// Escolas do grupo abaixo do P10 / acima do P90, visíveis em qualquer zoom; com zoom 10 ou
+// mais, as demais escolas do grupo aparecem pequenas e em cinza, como contexto.
+function desenharDestaque(comEscolas, anel, ano) {
+  camadaMunicipios.eachLayer((c) => c.setStyle({ fillOpacity: comEscolas ? 0.08 : 0.25, opacity: comEscolas ? 0.2 : 0.6 }));
+  const limites = mapa.getBounds().pad(0.2);
+  const corAbaixo = css("--abaixo"), corAcima = css("--acima"), cinza = css("--sem-dado");
+  const destaques = [];
+  for (const e of DADOS.escolas) {
+    if (e[2] !== ano || e[7] !== estado.grupo || faixaEscola(e) == null) continue;
+    if (destacada(e)) destaques.push(e);
+    else if (comEscolas && limites.contains([e[3], e[4]])) {
+      const ponto = L.circleMarker([e[3], e[4]], { radius: 3, color: anel, weight: 1, fillColor: cinza, fillOpacity: 0.8 });
+      ligarEscola(ponto, e);
+      ponto.addTo(camadaEscolas);
+    }
+  }
+  // As destacadas são desenhadas por último, para ficarem por cima das demais.
+  for (const e of destaques) {
+    const ponto = L.circleMarker([e[3], e[4]], {
+      radius: comEscolas ? 6 : 4, color: anel, weight: comEscolas ? 1.5 : 1,
+      fillColor: faixaEscola(e) === -1 ? corAbaixo : corAcima, fillOpacity: 0.95,
+    });
+    ligarEscola(ponto, e);
+    ponto.addTo(camadaEscolas);
+  }
+}
+function textoFaixa(f) {
+  return { "-1": "abaixo do P10", "0": "entre P10 e P90", "1": "acima do P90", "9": "não classificada (poucas escolas)" }[String(f)] || "";
+}
+function ligarEscola(ponto, e) {
+  const valor = emDestaque()
+    ? `IDEB ${DADOS.etapas[estado.etapa].toLowerCase()}: ${formatar(e[8 + estado.etapa])} · ${textoFaixa(faixaEscola(e))}`
+    : estado.indicador === "ideb" ? textoValor(e[8 + estado.etapa]) : `Grupo ${e[7]} · ${DADOS.grupos[e[7]]}`;
+  ponto.bindTooltip(() => dicaCurta(e[1] || `Escola ${e[0]}`, valor), { className: "dica", direction: "top" });
+  ponto.on("mouseover click", () => mostrarDetalhe(() => detalheEscola(e)));
+}
+
+function desenharLegendaDestaque() {
+  const lim = limitesAtuais();
+  const ano = Number(estado.ano);
+  const contar = (f) => DADOS.escolas.filter((e) => e[2] === ano && e[7] === estado.grupo && faixaEscola(e) === f).length;
+  const etapa = DADOS.etapas[estado.etapa].toLowerCase();
+  document.getElementById("titulo-legenda").textContent = `Grupo ${estado.grupo} · ${DADOS.grupos[estado.grupo]} — ${etapa}, ${estado.ano}`;
+  const legenda = document.getElementById("legenda");
+  if (!lim || lim.p10 == null) {
+    legenda.innerHTML = `<p class="nota" style="margin:0">Esta combinação tem ${lim ? lim.n : 0} escolas, menos que o mínimo de ${DADOS.minimoPercentil}, e não é classificada.</p>`;
+  } else {
+    const itens = [];
+    if (mostraAbaixo()) itens.push(`<div class="legenda-item"><span class="amostra" style="background:${css("--abaixo")}"></span>Abaixo do P10 (IDEB ≤ ${formatar(lim.p10, 2)}) · ${contar(-1)} escolas no mapa</div>`);
+    if (mostraAcima()) itens.push(`<div class="legenda-item"><span class="amostra" style="background:${css("--acima")}"></span>Acima do P90 (IDEB ≥ ${formatar(lim.p90, 2)}) · ${contar(1)} escolas no mapa</div>`);
+    itens.push(`<div class="legenda-item"><span class="amostra" style="background:${css("--sem-dado")}"></span>Demais escolas do grupo (a partir do zoom ${ZOOM_ESCOLAS})</div>`);
+    legenda.innerHTML = itens.join("");
+  }
+  document.getElementById("nota-legenda").textContent =
+    `Percentis do IDEB calculados entre as ${lim ? lim.n : 0} escolas do grupo com resultado nesta etapa e neste ano, inclusive as sem coordenada. As cores de abaixo e acima são as mesmas em todos os grupos.`;
+  document.getElementById("aviso-2021").hidden = estado.ano !== "2021";
+}
+
+function desenharLegenda() {
+  if (emDestaque()) return desenharLegendaDestaque();
+  const legenda = document.getElementById("legenda");
+  const f = faixas();
+  const unidade = estado.indicador === "ideb" ? "" : "%";
+  const casas = estado.indicador === "ideb" ? 1 : 0;
+  const rotulos = estado.indicador === "ideb"
+    ? [`menos de ${formatar(f[0], casas)}`, ...f.slice(0, -1).map((v, i) => `${formatar(v, casas)} a ${formatar(f[i + 1], casas)}`)]
+    : ["nenhuma escola", `até ${f[1]}%`, ...f.slice(1, -1).map((v, i) => `${v} a ${f[i + 2]}%`)];
+  rotulos.push(`${formatar(f[f.length - 1], casas)}${unidade} ou mais`);
+  let html = rotulos.map((r, i) => `<div class="legenda-item"><span class="amostra" style="background:${css(`${escala()}${i + 1}`)}"></span>${r}</div>`).join("");
+  html += `<div class="legenda-item"><span class="amostra" style="background:${css("--sem-dado")}"></span>sem ${estado.indicador === "ideb" ? "IDEB nesta etapa" : "dado"}</div>`;
+  legenda.innerHTML = html;
+
+  if (estado.indicador === "ideb") {
+    document.getElementById("titulo-legenda").textContent = `IDEB mediano — ${DADOS.etapas[estado.etapa].toLowerCase()}, ${estado.ano}`;
+    document.getElementById("nota-legenda").textContent = "Mediana do IDEB das escolas do município na etapa escolhida. Na camada de escolas, a cor é o IDEB da própria escola.";
+  } else {
+    document.getElementById("titulo-legenda").textContent = `% das escolas no grupo ${estado.grupo} · ${DADOS.grupos[estado.grupo]}, ${estado.ano}`;
+    document.getElementById("nota-legenda").textContent = "Na camada de escolas, as escolas do grupo escolhido aparecem em destaque e as demais em cinza.";
+  }
+  document.getElementById("aviso-2021").hidden = !(estado.indicador === "ideb" && estado.ano === "2021");
+}
+
+function desenharRanking() {
+  if (emDestaque()) return desenharRankingDestaque();
+  const itens = DADOS.municipios
+    // No IDEB, o mínimo vale para as escolas com IDEB na etapa escolhida.
+    .filter((m) => {
+      const d = m.anos[estado.ano];
+      if (!d || valorMunicipio(m) == null) return false;
+      return (estado.indicador === "ideb" ? d.n[estado.etapa] : d.e) >= MIN_ESCOLAS_RANKING;
+    })
+    .map((m) => ({ m, v: valorMunicipio(m) }))
+    .sort((a, b) => estado.ordem === "desc" ? b.v - a.v : a.v - b.v)
+    .slice(0, 10);
+  document.getElementById("titulo-ranking").textContent = estado.indicador === "ideb"
+    ? "Municípios por IDEB mediano"
+    : `Municípios por % no grupo ${estado.grupo}`;
+  const lista = document.getElementById("ranking");
+  lista.innerHTML = itens.map(({ m, v }) =>
+    `<li data-id="${m.id}"><span><span class="nome-mun">${m.nome}</span> <span class="uf">${m.uf}</span></span>` +
+    `<span class="valor">${estado.indicador === "ideb" ? formatar(v) : formatar(v, 0) + "%"}</span></li>`).join("");
+  lista.querySelectorAll("li").forEach((li) => li.addEventListener("click", () => {
+    const m = DADOS.municipios.find((x) => x.id === li.dataset.id);
+    mapa.flyTo([m.lat, m.lon], ZOOM_ESCOLAS + 1);
+  }));
+}
+
+// No destaque: municípios com mais escolas do grupo abaixo do P10 (ou acima do P90, em "Só acima").
+function desenharRankingDestaque() {
+  const alvo = estado.destaque === "acima" ? 1 : -1;
+  const ano = Number(estado.ano);
+  const contagem = new Map();
+  for (const e of DADOS.escolas) {
+    if (e[2] === ano && e[7] === estado.grupo && faixaEscola(e) === alvo) contagem.set(e[11], (contagem.get(e[11]) || 0) + 1);
+  }
+  const itens = [...contagem].filter(([id]) => MUNICIPIOS_POR_ID.has(id))
+    .map(([id, n]) => ({ m: MUNICIPIOS_POR_ID.get(id), v: n }))
+    .sort((a, b) => estado.ordem === "desc" ? b.v - a.v : a.v - b.v)
+    .slice(0, 10);
+  document.getElementById("titulo-ranking").textContent = `Municípios com mais escolas ${alvo === -1 ? "abaixo do P10" : "acima do P90"}`;
+  const lista = document.getElementById("ranking");
+  lista.innerHTML = itens.map(({ m, v }) =>
+    `<li data-id="${m.id}"><span><span class="nome-mun">${m.nome}</span> <span class="uf">${m.uf}</span></span><span class="valor">${v}</span></li>`).join("");
+  lista.querySelectorAll("li").forEach((li) => li.addEventListener("click", () => {
+    const m = MUNICIPIOS_POR_ID.get(li.dataset.id);
+    mapa.flyTo([m.lat, m.lon], ZOOM_ESCOLAS + 1);
+  }));
+}
+
+function atualizar() {
+  // A etapa vale para o IDEB e para o destaque P10 / P90, que é calculado por etapa.
+  document.getElementById("controle-etapa").hidden = !(estado.indicador === "ideb" || emDestaque());
+  document.getElementById("controle-grupo").hidden = estado.indicador !== "grupo";
+  document.getElementById("controle-destaque").hidden = estado.indicador !== "grupo";
+  // A cor do grupo escolhido aparece ao lado do seletor e nas barras do painel de detalhe.
+  const corGrupo = css(`--g${estado.grupo}-4`);
+  document.getElementById("amostra-grupo").style.background = corGrupo;
+  document.documentElement.style.setProperty("--cor-grupo", estado.indicador === "grupo" ? corGrupo : css("--accent"));
+  desenharMunicipios();
+  desenharEscolas();
+  desenharLegenda();
+  desenharRanking();
+  if (ultimoDetalhe) document.getElementById("detalhe").innerHTML = ultimoDetalhe();
+}
+
+// ---------- controles ----------
+function grupoSegmentado(seletor, chave, aoMudar) {
+  document.querySelectorAll(seletor).forEach((botao) => botao.addEventListener("click", () => {
+    document.querySelectorAll(seletor).forEach((b) => b.setAttribute("aria-pressed", String(b === botao)));
+    estado[chave] = botao.dataset[chave];
+    aoMudar();
+  }));
+}
+document.getElementById("anos").innerHTML = DADOS.anos.map((a) =>
+  `<button type="button" data-ano="${a}" aria-pressed="${String(a) === estado.ano}">${a}</button>`).join("");
+document.getElementById("etapa").innerHTML = DADOS.etapas.map((e, i) => `<option value="${i}">${e}</option>`).join("");
+document.getElementById("grupo").innerHTML = DADOS.grupos.map((g, i) => `<option value="${i}">${i} · ${g}</option>`).join("");
+
+grupoSegmentado("[data-indicador]", "indicador", atualizar);
+grupoSegmentado("[data-ano]", "ano", atualizar);
+grupoSegmentado("[data-ordem]", "ordem", desenharRanking);
+grupoSegmentado("[data-destaque]", "destaque", atualizar);
+document.getElementById("etapa").addEventListener("change", (e) => { estado.etapa = Number(e.target.value); atualizar(); });
+document.getElementById("grupo").addEventListener("change", (e) => { estado.grupo = Number(e.target.value); atualizar(); });
+mapa.on("zoomend moveend", desenharEscolas);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { aplicarFundo(); atualizar(); });
+
+atualizar();
+</script>
+</body>
+</html>

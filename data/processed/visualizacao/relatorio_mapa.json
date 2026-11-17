@@ -1,0 +1,149 @@
+{
+  "executado_em_utc": "2026-11-12T18:49:36.111231+00:00",
+  "agrupamento": "conjunto (três anos juntos)",
+  "escolas_ano": 62325,
+  "escolas_ano_com_coordenada": 55274,
+  "municipios_no_mapa": 1782,
+  "posicao_do_municipio": "mediana das coordenadas das escolas do município",
+  "municipios_excluidos_sem_coordenada": [
+    {
+      "id_municipio": "2200954",
+      "sigla_uf": "PI",
+      "anos": [
+        2019,
+        2021,
+        2023
+      ],
+      "escolas": 7
+    },
+    {
+      "id_municipio": "2203453",
+      "sigla_uf": "PI",
+      "anos": [
+        2019,
+        2021,
+        2023
+      ],
+      "escolas": 11
+    },
+    {
+      "id_municipio": "2207108",
+      "sigla_uf": "PI",
+      "anos": [
+        2019,
+        2021,
+        2023
+      ],
+      "escolas": 6
+    },
+    {
+      "id_municipio": "2207553",
+      "sigla_uf": "PI",
+      "anos": [
+        2019,
+        2023
+      ],
+      "escolas": 6
+    },
+    {
+      "id_municipio": "2910503",
+      "sigla_uf": "BA",
+      "anos": [
+        2019,
+        2021,
+        2023
+      ],
+      "escolas": 37
+    },
+    {
+      "id_municipio": "2911303",
+      "sigla_uf": "BA",
+      "anos": [
+        2019,
+        2021,
+        2023
+      ],
+      "escolas": 19
+    },
+    {
+      "id_municipio": "2919009",
+      "sigla_uf": "BA",
+      "anos": [
+        2019,
+        2021,
+        2023
+      ],
+      "escolas": 9
+    },
+    {
+      "id_municipio": "2922201",
+      "sigla_uf": "BA",
+      "anos": [
+        2019,
+        2021,
+        2023
+      ],
+      "escolas": 14
+    },
+    {
+      "id_municipio": "2923308",
+      "sigla_uf": "BA",
+      "anos": [
+        2019,
+        2023
+      ],
+      "escolas": 7
+    },
+    {
+      "id_municipio": "2929354",
+      "sigla_uf": "BA",
+      "anos": [
+        2019,
+        2023
+      ],
+      "escolas": 2
+    },
+    {
+      "id_municipio": "2929750",
+      "sigla_uf": "BA",
+      "anos": [
+        2019,
+        2021,
+        2023
+      ],
+      "escolas": 23
+    },
+    {
+      "id_municipio": "2933406",
+      "sigla_uf": "BA",
+      "anos": [
+        2019,
+        2021,
+        2023
+      ],
+      "escolas": 15
+    }
+  ],
+  "percentis": {
+    "inferior": 0.1,
+    "superior": 0.9,
+    "recorte": "grupo × etapa × ano",
+    "minimo_escolas": 30,
+    "escolas_etapa_abaixo": 9023,
+    "escolas_etapa_acima": 8477,
+    "combinacoes_nao_classificadas": [
+      {
+        "cluster": 3,
+        "ano": 2019,
+        "etapa": "medio",
+        "escolas": 9
+      },
+      {
+        "cluster": 3,
+        "ano": 2021,
+        "etapa": "medio",
+        "escolas": 6
+      }
+    ]
+  }
+}

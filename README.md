@@ -38,7 +38,8 @@ A base integrada tem como chave `id_escola + ano + anos_escolares` e reúne apen
 | Atividade 01 — Escolha e caracterização dos dados | Concluída | [docs/atividade-01-dados.md](docs/atividade-01-dados.md) |
 | Atividade 02 — Pipeline de preparação e integração | Concluída | [docs/atividade-02-pipeline.md](docs/atividade-02-pipeline.md) |
 | Arquitetura do sistema (dados, banco, API e painel) | Próximo passo | — |
-| Modelos de anomalias, padrões e prioridades | Próximo passo | — |
+| Atividade 03 — Descoberta de padrões (agrupamento) | Primeira versão concluída | [docs/atividade-03-agrupamento.md](docs/atividade-03-agrupamento.md) e [docs/agrupamento-por-ano.md](docs/agrupamento-por-ano.md) |
+| Modelos de anomalias e prioridades | Próximo passo | [docs/proximos_passos.md](docs/proximos_passos.md) |
 
 Pontos de atenção que orientam as próximas etapas:
 
@@ -52,7 +53,9 @@ Pontos de atenção que orientam as próximas etapas:
 | --- | --- |
 | [data](data/) | Consultas SQL, arquivos CSV de origem e resultados processados. Consulte o [README de dados](data/README.md) para conhecer as bases disponíveis. |
 | [docs](docs/) | Documentos entregáveis, caracterização das fontes e registros das atividades do projeto. |
-| [notebooks](notebooks/) | Notebooks de análise exploratória e investigação dos dados. |
+| [notebooks](notebooks/) | Notebooks de análise exploratória, investigação dos dados e interpretação do agrupamento. |
+| [modelos](modelos/) | Modelos ajustados sobre a matriz de atributos, como o agrupamento das escolas por perfil. |
+| [visualizacao](visualizacao/) | Preparação dos dados e página do mapa interativo de escolas e municípios (IDEB e grupos). |
 | [pipelines](pipelines/) | Rotinas de processamento, testes automatizados e suas instruções de execução. |
 | [requirements.txt](requirements.txt) | Dependências Python necessárias para executar o código do projeto. |
 
@@ -63,6 +66,7 @@ Pontos de atenção que orientam as próximas etapas:
 | Python | 3.10 ou superior | Executar o processamento e os testes automatizados. |
 | `pip` | Compatível com a versão instalada do Python | Instalar as dependências declaradas em `requirements.txt`. |
 | Pandas | 2.0 ou superior e inferior a 4.0 | Ler, validar, transformar e integrar os dados tabulares. |
+| scikit-learn | 1.5 ou superior e inferior a 2.0 | Padronizar os atributos e ajustar os modelos de agrupamento. |
 | Ambiente virtual | Recomendado | Isolar as dependências do projeto das demais instalações do sistema. |
 | Jupyter Notebook ou editor compatível | Opcional | Abrir e executar os arquivos da pasta `notebooks/`. |
 
